@@ -1,0 +1,1978 @@
+create database DBProject111
+go
+use DBProject111
+go
+
+
+CREATE TABLE [관리기록]
+( 
+	[관리_일자]          date  NULL ,
+	[구청_고유번호]      int  NOT NULL ,
+	[주차장번호]         int  NOT NULL 
+)
+go
+
+ALTER TABLE [관리기록]
+	ADD CONSTRAINT [XPK관리기록] PRIMARY KEY  CLUSTERED ([구청_고유번호] ASC,[주차장번호] ASC)
+go
+
+CREATE TABLE [관리자]
+( 
+	[고유번호]           integer  NOT NULL ,
+	[근무종료시간]       Time  NULL ,
+	[근무시작기간]       date  NULL ,
+	[근무시작시간]       Time  NULL ,
+	[근무종료기간]       date  NULL 
+)
+go
+
+ALTER TABLE [관리자]
+	ADD CONSTRAINT [XPK관리자] PRIMARY KEY  CLUSTERED ([고유번호] ASC)
+go
+
+CREATE TABLE [구청]
+( 
+	[구청_고유번호]      int  NOT NULL ,
+	[구_명칭]            varchar(20)  NULL 
+)
+go
+
+ALTER TABLE [구청]
+	ADD CONSTRAINT [XPK구청] PRIMARY KEY  CLUSTERED ([구청_고유번호] ASC)
+go
+
+CREATE TABLE [리뷰]
+( 
+	[리뷰_번호]          int  NOT NULL ,
+	[내용]               varchar(max)  NULL ,
+	[평점]               int  NULL ,
+	[주차장번호]         int  NOT NULL ,
+	[고유번호]           integer  NOT NULL 
+)
+go
+
+ALTER TABLE [리뷰]
+	ADD CONSTRAINT [XPK리뷰] PRIMARY KEY  CLUSTERED ([리뷰_번호] ASC,[주차장번호] ASC,[고유번호] ASC)
+go
+
+CREATE TABLE [사용이력]
+( 
+	[주차_시작시간]      datetime  NOT NULL ,
+	[주차_종료시간]      datetime  NULL ,
+	[납부요금]           int  NULL ,
+	[총_요금]            int  NULL ,
+	[주차장번호]         int  NOT NULL ,
+	[고유번호]           integer  NOT NULL 
+)
+go
+
+ALTER TABLE [사용이력]
+	ADD CONSTRAINT [XPK사용이력] PRIMARY KEY  CLUSTERED ([주차_시작시간] ASC,[주차장번호] ASC,[고유번호] ASC)
+go
+
+CREATE TABLE [사용자]
+( 
+	[고유번호]           integer  NOT NULL ,
+	[현재위치x]          float  NULL ,
+	[현재위치y]          float  NULL 
+)
+go
+
+ALTER TABLE [사용자]
+	ADD CONSTRAINT [XPK사용자] PRIMARY KEY  CLUSTERED ([고유번호] ASC)
+go
+
+CREATE TABLE [소유자]
+( 
+	[고유번호]           integer  NOT NULL ,
+	[계좌]               varchar(max)  NULL 
+)
+go
+
+ALTER TABLE [소유자]
+	ADD CONSTRAINT [XPK소유자] PRIMARY KEY  CLUSTERED ([고유번호] ASC)
+go
+
+CREATE TABLE [유저]
+( 
+	[고유번호]           integer  NOT NULL ,
+	[아이디]             varchar(20)  NULL ,
+	[비밀번호]           varchar(max)  NULL ,
+	[전화번호]           varchar(20)  NULL ,
+	[생년월일]           date  NULL 
+)
+go
+
+ALTER TABLE [유저]
+	ADD CONSTRAINT [XPK유저] PRIMARY KEY  CLUSTERED ([고유번호] ASC)
+go
+
+CREATE TABLE [자리]
+( 
+	[자리번호]           int  NOT NULL ,
+	[현재_사용여부]      binary  NULL ,
+	[가로크기]           int  NULL ,
+	[이용대상]           int  NULL ,
+	[주차장번호]         int  NOT NULL ,
+	[세로크기]           int  NULL 
+)
+go
+
+ALTER TABLE [자리]
+	ADD CONSTRAINT [XPK자리] PRIMARY KEY  CLUSTERED ([자리번호] ASC,[주차장번호] ASC)
+go
+
+CREATE TABLE [주차장]
+( 
+	[주차장번호]         int  NOT NULL ,
+	[시간당_요금]        int  NULL ,
+	[종류]               int  NULL ,
+	[주소]               varchar(max)  NULL ,
+	[x좌표]              float  NULL ,
+	[최대이용시간]       int  NULL ,
+	[개장시간]           Time  NULL ,
+	[폐장시간]           Time  NULL ,
+	[총_자리_수]         int  NULL ,
+	[현재_자리_수]       int  NULL ,
+	[고유번호]           integer  NULL ,
+	[y좌표]              float  NULL 
+)
+go
+
+ALTER TABLE [주차장]
+	ADD CONSTRAINT [XPK주차장] PRIMARY KEY  CLUSTERED ([주차장번호] ASC)
+go
+
+CREATE TABLE [차량]
+( 
+	[차량번호]           char(18)  NOT NULL ,
+	[차종]               varchar(20)  NULL ,
+	[고유번호]           integer  NULL 
+)
+go
+
+ALTER TABLE [차량]
+	ADD CONSTRAINT [XPK차량] PRIMARY KEY  CLUSTERED ([차량번호] ASC)
+go
+
+
+ALTER TABLE [관리기록]
+	ADD CONSTRAINT [담당] FOREIGN KEY ([구청_고유번호]) REFERENCES [구청]([구청_고유번호])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [관리기록]
+	ADD CONSTRAINT [구청_관리] FOREIGN KEY ([주차장번호]) REFERENCES [주차장]([주차장번호])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+
+ALTER TABLE [관리자]
+	ADD CONSTRAINT [Overlap_1] FOREIGN KEY ([고유번호]) REFERENCES [유저]([고유번호])
+		ON DELETE CASCADE
+		ON UPDATE CASCADE
+go
+
+
+ALTER TABLE [리뷰]
+	ADD CONSTRAINT [평가] FOREIGN KEY ([주차장번호]) REFERENCES [주차장]([주차장번호])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [리뷰]
+	ADD CONSTRAINT [작성] FOREIGN KEY ([고유번호]) REFERENCES [사용자]([고유번호])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+
+ALTER TABLE [사용이력]
+	ADD CONSTRAINT [사용2] FOREIGN KEY ([주차장번호]) REFERENCES [주차장]([주차장번호])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [사용이력]
+	ADD CONSTRAINT [사용] FOREIGN KEY ([고유번호]) REFERENCES [사용자]([고유번호])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+
+ALTER TABLE [사용자]
+	ADD CONSTRAINT [Overlap_3] FOREIGN KEY ([고유번호]) REFERENCES [유저]([고유번호])
+		ON DELETE CASCADE
+		ON UPDATE CASCADE
+go
+
+
+ALTER TABLE [소유자]
+	ADD CONSTRAINT [Overlap_2] FOREIGN KEY ([고유번호]) REFERENCES [유저]([고유번호])
+		ON DELETE CASCADE
+		ON UPDATE CASCADE
+go
+
+
+ALTER TABLE [자리]
+	ADD CONSTRAINT [소속] FOREIGN KEY ([주차장번호]) REFERENCES [주차장]([주차장번호])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+
+ALTER TABLE [주차장]
+	ADD CONSTRAINT [관리] FOREIGN KEY ([고유번호]) REFERENCES [관리자]([고유번호])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [주차장]
+	ADD CONSTRAINT [제공] FOREIGN KEY ([고유번호]) REFERENCES [소유자]([고유번호])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+
+ALTER TABLE [차량]
+	ADD CONSTRAINT [소유] FOREIGN KEY ([고유번호]) REFERENCES [사용자]([고유번호])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+
+CREATE TRIGGER tD_관리기록 ON 관리기록 FOR DELETE AS
+/* erwin Builtin Trigger */
+/* DELETE trigger on 관리기록 */
+BEGIN
+  DECLARE  @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+    /* erwin Builtin Trigger */
+    /* 주차장  관리기록 on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="000267a5", PARENT_OWNER="", PARENT_TABLE="주차장"
+    CHILD_OWNER="", CHILD_TABLE="관리기록"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="구청_관리", FK_COLUMNS="주차장번호" */
+    IF EXISTS (SELECT * FROM deleted,주차장
+      WHERE
+        /* %JoinFKPK(deleted,주차장," = "," AND") */
+        deleted.주차장번호 = 주차장.주차장번호 AND
+        NOT EXISTS (
+          SELECT * FROM 관리기록
+          WHERE
+            /* %JoinFKPK(관리기록,주차장," = "," AND") */
+            관리기록.주차장번호 = 주차장.주차장번호
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last 관리기록 because 주차장 exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* 구청  관리기록 on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="구청"
+    CHILD_OWNER="", CHILD_TABLE="관리기록"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="담당", FK_COLUMNS="구청_고유번호" */
+    IF EXISTS (SELECT * FROM deleted,구청
+      WHERE
+        /* %JoinFKPK(deleted,구청," = "," AND") */
+        deleted.구청_고유번호 = 구청.구청_고유번호 AND
+        NOT EXISTS (
+          SELECT * FROM 관리기록
+          WHERE
+            /* %JoinFKPK(관리기록,구청," = "," AND") */
+            관리기록.구청_고유번호 = 구청.구청_고유번호
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last 관리기록 because 구청 exists.'
+      GOTO error
+    END
+
+
+    /* erwin Builtin Trigger */
+    RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+CREATE TRIGGER tU_관리기록 ON 관리기록 FOR UPDATE AS
+/* erwin Builtin Trigger */
+/* UPDATE trigger on 관리기록 */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @ins구청_고유번호 int, 
+           @ins주차장번호 int,
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+  /* erwin Builtin Trigger */
+  /* 주차장  관리기록 on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="0002bab3", PARENT_OWNER="", PARENT_TABLE="주차장"
+    CHILD_OWNER="", CHILD_TABLE="관리기록"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="구청_관리", FK_COLUMNS="주차장번호" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(주차장번호)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,주차장
+        WHERE
+          /* %JoinFKPK(inserted,주차장) */
+          inserted.주차장번호 = 주차장.주차장번호
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update 관리기록 because 주차장 does not exist.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* 구청  관리기록 on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="구청"
+    CHILD_OWNER="", CHILD_TABLE="관리기록"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="담당", FK_COLUMNS="구청_고유번호" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(구청_고유번호)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,구청
+        WHERE
+          /* %JoinFKPK(inserted,구청) */
+          inserted.구청_고유번호 = 구청.구청_고유번호
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update 관리기록 because 구청 does not exist.'
+      GOTO error
+    END
+  END
+
+
+  /* erwin Builtin Trigger */
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+
+
+CREATE TRIGGER tD_관리자 ON 관리자 FOR DELETE AS
+/* erwin Builtin Trigger */
+/* DELETE trigger on 관리자 */
+BEGIN
+  DECLARE  @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+    /* erwin Builtin Trigger */
+    /* 관리자  주차장 on parent delete no action */
+    /* ERWIN_RELATION:CHECKSUM="0002260c", PARENT_OWNER="", PARENT_TABLE="관리자"
+    CHILD_OWNER="", CHILD_TABLE="주차장"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="관리", FK_COLUMNS="고유번호" */
+    IF EXISTS (
+      SELECT * FROM deleted,주차장
+      WHERE
+        /*  %JoinFKPK(주차장,deleted," = "," AND") */
+        주차장.고유번호 = deleted.고유번호
+    )
+    BEGIN
+      SELECT @errno  = 30001,
+             @errmsg = 'Cannot delete 관리자 because 주차장 exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* 유저  관리자 on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="유저"
+    CHILD_OWNER="", CHILD_TABLE="관리자"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="Overlap_1", FK_COLUMNS="고유번호" */
+    IF EXISTS (SELECT * FROM deleted,유저
+      WHERE
+        /* %JoinFKPK(deleted,유저," = "," AND") */
+        deleted.고유번호 = 유저.고유번호 AND
+        NOT EXISTS (
+          SELECT * FROM 관리자
+          WHERE
+            /* %JoinFKPK(관리자,유저," = "," AND") */
+            관리자.고유번호 = 유저.고유번호
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last 관리자 because 유저 exists.'
+      GOTO error
+    END
+
+
+    /* erwin Builtin Trigger */
+    RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+CREATE TRIGGER tU_관리자 ON 관리자 FOR UPDATE AS
+/* erwin Builtin Trigger */
+/* UPDATE trigger on 관리자 */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @ins고유번호 integer,
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+  /* erwin Builtin Trigger */
+  /* 관리자  주차장 on parent update no action */
+  /* ERWIN_RELATION:CHECKSUM="00025033", PARENT_OWNER="", PARENT_TABLE="관리자"
+    CHILD_OWNER="", CHILD_TABLE="주차장"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="관리", FK_COLUMNS="고유번호" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(고유번호)
+  BEGIN
+    IF EXISTS (
+      SELECT * FROM deleted,주차장
+      WHERE
+        /*  %JoinFKPK(주차장,deleted," = "," AND") */
+        주차장.고유번호 = deleted.고유번호
+    )
+    BEGIN
+      SELECT @errno  = 30005,
+             @errmsg = 'Cannot update 관리자 because 주차장 exists.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* 유저  관리자 on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="유저"
+    CHILD_OWNER="", CHILD_TABLE="관리자"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="Overlap_1", FK_COLUMNS="고유번호" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(고유번호)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,유저
+        WHERE
+          /* %JoinFKPK(inserted,유저) */
+          inserted.고유번호 = 유저.고유번호
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update 관리자 because 유저 does not exist.'
+      GOTO error
+    END
+  END
+
+
+  /* erwin Builtin Trigger */
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+
+
+CREATE TRIGGER tD_구청 ON 구청 FOR DELETE AS
+/* erwin Builtin Trigger */
+/* DELETE trigger on 구청 */
+BEGIN
+  DECLARE  @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+    /* erwin Builtin Trigger */
+    /* 구청  관리기록 on parent delete no action */
+    /* ERWIN_RELATION:CHECKSUM="000111a4", PARENT_OWNER="", PARENT_TABLE="구청"
+    CHILD_OWNER="", CHILD_TABLE="관리기록"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="담당", FK_COLUMNS="구청_고유번호" */
+    IF EXISTS (
+      SELECT * FROM deleted,관리기록
+      WHERE
+        /*  %JoinFKPK(관리기록,deleted," = "," AND") */
+        관리기록.구청_고유번호 = deleted.구청_고유번호
+    )
+    BEGIN
+      SELECT @errno  = 30001,
+             @errmsg = 'Cannot delete 구청 because 관리기록 exists.'
+      GOTO error
+    END
+
+
+    /* erwin Builtin Trigger */
+    RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+CREATE TRIGGER tU_구청 ON 구청 FOR UPDATE AS
+/* erwin Builtin Trigger */
+/* UPDATE trigger on 구청 */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @ins구청_고유번호 int,
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+  /* erwin Builtin Trigger */
+  /* 구청  관리기록 on parent update no action */
+  /* ERWIN_RELATION:CHECKSUM="000138bf", PARENT_OWNER="", PARENT_TABLE="구청"
+    CHILD_OWNER="", CHILD_TABLE="관리기록"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="담당", FK_COLUMNS="구청_고유번호" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(구청_고유번호)
+  BEGIN
+    IF EXISTS (
+      SELECT * FROM deleted,관리기록
+      WHERE
+        /*  %JoinFKPK(관리기록,deleted," = "," AND") */
+        관리기록.구청_고유번호 = deleted.구청_고유번호
+    )
+    BEGIN
+      SELECT @errno  = 30005,
+             @errmsg = 'Cannot update 구청 because 관리기록 exists.'
+      GOTO error
+    END
+  END
+
+
+  /* erwin Builtin Trigger */
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+
+
+CREATE TRIGGER tD_리뷰 ON 리뷰 FOR DELETE AS
+/* erwin Builtin Trigger */
+/* DELETE trigger on 리뷰 */
+BEGIN
+  DECLARE  @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+    /* erwin Builtin Trigger */
+    /* 사용자  리뷰 on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="000252cb", PARENT_OWNER="", PARENT_TABLE="사용자"
+    CHILD_OWNER="", CHILD_TABLE="리뷰"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="작성", FK_COLUMNS="고유번호" */
+    IF EXISTS (SELECT * FROM deleted,사용자
+      WHERE
+        /* %JoinFKPK(deleted,사용자," = "," AND") */
+        deleted.고유번호 = 사용자.고유번호 AND
+        NOT EXISTS (
+          SELECT * FROM 리뷰
+          WHERE
+            /* %JoinFKPK(리뷰,사용자," = "," AND") */
+            리뷰.고유번호 = 사용자.고유번호
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last 리뷰 because 사용자 exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* 주차장  리뷰 on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="주차장"
+    CHILD_OWNER="", CHILD_TABLE="리뷰"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="평가", FK_COLUMNS="주차장번호" */
+    IF EXISTS (SELECT * FROM deleted,주차장
+      WHERE
+        /* %JoinFKPK(deleted,주차장," = "," AND") */
+        deleted.주차장번호 = 주차장.주차장번호 AND
+        NOT EXISTS (
+          SELECT * FROM 리뷰
+          WHERE
+            /* %JoinFKPK(리뷰,주차장," = "," AND") */
+            리뷰.주차장번호 = 주차장.주차장번호
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last 리뷰 because 주차장 exists.'
+      GOTO error
+    END
+
+
+    /* erwin Builtin Trigger */
+    RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+CREATE TRIGGER tU_리뷰 ON 리뷰 FOR UPDATE AS
+/* erwin Builtin Trigger */
+/* UPDATE trigger on 리뷰 */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @ins리뷰_번호 int, 
+           @ins주차장번호 int, 
+           @ins고유번호 integer,
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+  /* erwin Builtin Trigger */
+  /* 사용자  리뷰 on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="0002926d", PARENT_OWNER="", PARENT_TABLE="사용자"
+    CHILD_OWNER="", CHILD_TABLE="리뷰"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="작성", FK_COLUMNS="고유번호" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(고유번호)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,사용자
+        WHERE
+          /* %JoinFKPK(inserted,사용자) */
+          inserted.고유번호 = 사용자.고유번호
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update 리뷰 because 사용자 does not exist.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* 주차장  리뷰 on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="주차장"
+    CHILD_OWNER="", CHILD_TABLE="리뷰"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="평가", FK_COLUMNS="주차장번호" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(주차장번호)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,주차장
+        WHERE
+          /* %JoinFKPK(inserted,주차장) */
+          inserted.주차장번호 = 주차장.주차장번호
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update 리뷰 because 주차장 does not exist.'
+      GOTO error
+    END
+  END
+
+
+  /* erwin Builtin Trigger */
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+
+
+CREATE TRIGGER tD_사용이력 ON 사용이력 FOR DELETE AS
+/* erwin Builtin Trigger */
+/* DELETE trigger on 사용이력 */
+BEGIN
+  DECLARE  @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+    /* erwin Builtin Trigger */
+    /* 사용자  사용이력 on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00026472", PARENT_OWNER="", PARENT_TABLE="사용자"
+    CHILD_OWNER="", CHILD_TABLE="사용이력"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="사용", FK_COLUMNS="고유번호" */
+    IF EXISTS (SELECT * FROM deleted,사용자
+      WHERE
+        /* %JoinFKPK(deleted,사용자," = "," AND") */
+        deleted.고유번호 = 사용자.고유번호 AND
+        NOT EXISTS (
+          SELECT * FROM 사용이력
+          WHERE
+            /* %JoinFKPK(사용이력,사용자," = "," AND") */
+            사용이력.고유번호 = 사용자.고유번호
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last 사용이력 because 사용자 exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* 주차장  사용이력 on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="주차장"
+    CHILD_OWNER="", CHILD_TABLE="사용이력"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="사용2", FK_COLUMNS="주차장번호" */
+    IF EXISTS (SELECT * FROM deleted,주차장
+      WHERE
+        /* %JoinFKPK(deleted,주차장," = "," AND") */
+        deleted.주차장번호 = 주차장.주차장번호 AND
+        NOT EXISTS (
+          SELECT * FROM 사용이력
+          WHERE
+            /* %JoinFKPK(사용이력,주차장," = "," AND") */
+            사용이력.주차장번호 = 주차장.주차장번호
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last 사용이력 because 주차장 exists.'
+      GOTO error
+    END
+
+
+    /* erwin Builtin Trigger */
+    RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+CREATE TRIGGER tU_사용이력 ON 사용이력 FOR UPDATE AS
+/* erwin Builtin Trigger */
+/* UPDATE trigger on 사용이력 */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @ins주차_시작시간 datetime, 
+           @ins주차장번호 int, 
+           @ins고유번호 integer,
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+  /* erwin Builtin Trigger */
+  /* 사용자  사용이력 on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="000296eb", PARENT_OWNER="", PARENT_TABLE="사용자"
+    CHILD_OWNER="", CHILD_TABLE="사용이력"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="사용", FK_COLUMNS="고유번호" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(고유번호)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,사용자
+        WHERE
+          /* %JoinFKPK(inserted,사용자) */
+          inserted.고유번호 = 사용자.고유번호
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update 사용이력 because 사용자 does not exist.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* 주차장  사용이력 on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="주차장"
+    CHILD_OWNER="", CHILD_TABLE="사용이력"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="사용2", FK_COLUMNS="주차장번호" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(주차장번호)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,주차장
+        WHERE
+          /* %JoinFKPK(inserted,주차장) */
+          inserted.주차장번호 = 주차장.주차장번호
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update 사용이력 because 주차장 does not exist.'
+      GOTO error
+    END
+  END
+
+
+  /* erwin Builtin Trigger */
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+
+
+CREATE TRIGGER tD_사용자 ON 사용자 FOR DELETE AS
+/* erwin Builtin Trigger */
+/* DELETE trigger on 사용자 */
+BEGIN
+  DECLARE  @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+    /* erwin Builtin Trigger */
+    /* 사용자  리뷰 on parent delete no action */
+    /* ERWIN_RELATION:CHECKSUM="0003cb33", PARENT_OWNER="", PARENT_TABLE="사용자"
+    CHILD_OWNER="", CHILD_TABLE="리뷰"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="작성", FK_COLUMNS="고유번호" */
+    IF EXISTS (
+      SELECT * FROM deleted,리뷰
+      WHERE
+        /*  %JoinFKPK(리뷰,deleted," = "," AND") */
+        리뷰.고유번호 = deleted.고유번호
+    )
+    BEGIN
+      SELECT @errno  = 30001,
+             @errmsg = 'Cannot delete 사용자 because 리뷰 exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* 사용자  차량 on parent delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="사용자"
+    CHILD_OWNER="", CHILD_TABLE="차량"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="소유", FK_COLUMNS="고유번호" */
+    IF EXISTS (
+      SELECT * FROM deleted,차량
+      WHERE
+        /*  %JoinFKPK(차량,deleted," = "," AND") */
+        차량.고유번호 = deleted.고유번호
+    )
+    BEGIN
+      SELECT @errno  = 30001,
+             @errmsg = 'Cannot delete 사용자 because 차량 exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* 사용자  사용이력 on parent delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="사용자"
+    CHILD_OWNER="", CHILD_TABLE="사용이력"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="사용", FK_COLUMNS="고유번호" */
+    IF EXISTS (
+      SELECT * FROM deleted,사용이력
+      WHERE
+        /*  %JoinFKPK(사용이력,deleted," = "," AND") */
+        사용이력.고유번호 = deleted.고유번호
+    )
+    BEGIN
+      SELECT @errno  = 30001,
+             @errmsg = 'Cannot delete 사용자 because 사용이력 exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* 유저  사용자 on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="유저"
+    CHILD_OWNER="", CHILD_TABLE="사용자"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="Overlap_3", FK_COLUMNS="고유번호" */
+    IF EXISTS (SELECT * FROM deleted,유저
+      WHERE
+        /* %JoinFKPK(deleted,유저," = "," AND") */
+        deleted.고유번호 = 유저.고유번호 AND
+        NOT EXISTS (
+          SELECT * FROM 사용자
+          WHERE
+            /* %JoinFKPK(사용자,유저," = "," AND") */
+            사용자.고유번호 = 유저.고유번호
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last 사용자 because 유저 exists.'
+      GOTO error
+    END
+
+
+    /* erwin Builtin Trigger */
+    RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+CREATE TRIGGER tU_사용자 ON 사용자 FOR UPDATE AS
+/* erwin Builtin Trigger */
+/* UPDATE trigger on 사용자 */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @ins고유번호 integer,
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+  /* erwin Builtin Trigger */
+  /* 사용자  리뷰 on parent update no action */
+  /* ERWIN_RELATION:CHECKSUM="00044031", PARENT_OWNER="", PARENT_TABLE="사용자"
+    CHILD_OWNER="", CHILD_TABLE="리뷰"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="작성", FK_COLUMNS="고유번호" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(고유번호)
+  BEGIN
+    IF EXISTS (
+      SELECT * FROM deleted,리뷰
+      WHERE
+        /*  %JoinFKPK(리뷰,deleted," = "," AND") */
+        리뷰.고유번호 = deleted.고유번호
+    )
+    BEGIN
+      SELECT @errno  = 30005,
+             @errmsg = 'Cannot update 사용자 because 리뷰 exists.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* 사용자  차량 on parent update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="사용자"
+    CHILD_OWNER="", CHILD_TABLE="차량"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="소유", FK_COLUMNS="고유번호" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(고유번호)
+  BEGIN
+    IF EXISTS (
+      SELECT * FROM deleted,차량
+      WHERE
+        /*  %JoinFKPK(차량,deleted," = "," AND") */
+        차량.고유번호 = deleted.고유번호
+    )
+    BEGIN
+      SELECT @errno  = 30005,
+             @errmsg = 'Cannot update 사용자 because 차량 exists.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* 사용자  사용이력 on parent update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="사용자"
+    CHILD_OWNER="", CHILD_TABLE="사용이력"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="사용", FK_COLUMNS="고유번호" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(고유번호)
+  BEGIN
+    IF EXISTS (
+      SELECT * FROM deleted,사용이력
+      WHERE
+        /*  %JoinFKPK(사용이력,deleted," = "," AND") */
+        사용이력.고유번호 = deleted.고유번호
+    )
+    BEGIN
+      SELECT @errno  = 30005,
+             @errmsg = 'Cannot update 사용자 because 사용이력 exists.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* 유저  사용자 on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="유저"
+    CHILD_OWNER="", CHILD_TABLE="사용자"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="Overlap_3", FK_COLUMNS="고유번호" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(고유번호)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,유저
+        WHERE
+          /* %JoinFKPK(inserted,유저) */
+          inserted.고유번호 = 유저.고유번호
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update 사용자 because 유저 does not exist.'
+      GOTO error
+    END
+  END
+
+
+  /* erwin Builtin Trigger */
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+
+
+CREATE TRIGGER tD_소유자 ON 소유자 FOR DELETE AS
+/* erwin Builtin Trigger */
+/* DELETE trigger on 소유자 */
+BEGIN
+  DECLARE  @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+    /* erwin Builtin Trigger */
+    /* 소유자  주차장 on parent delete no action */
+    /* ERWIN_RELATION:CHECKSUM="0002160a", PARENT_OWNER="", PARENT_TABLE="소유자"
+    CHILD_OWNER="", CHILD_TABLE="주차장"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="제공", FK_COLUMNS="고유번호" */
+    IF EXISTS (
+      SELECT * FROM deleted,주차장
+      WHERE
+        /*  %JoinFKPK(주차장,deleted," = "," AND") */
+        주차장.고유번호 = deleted.고유번호
+    )
+    BEGIN
+      SELECT @errno  = 30001,
+             @errmsg = 'Cannot delete 소유자 because 주차장 exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* 유저  소유자 on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="유저"
+    CHILD_OWNER="", CHILD_TABLE="소유자"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="Overlap_2", FK_COLUMNS="고유번호" */
+    IF EXISTS (SELECT * FROM deleted,유저
+      WHERE
+        /* %JoinFKPK(deleted,유저," = "," AND") */
+        deleted.고유번호 = 유저.고유번호 AND
+        NOT EXISTS (
+          SELECT * FROM 소유자
+          WHERE
+            /* %JoinFKPK(소유자,유저," = "," AND") */
+            소유자.고유번호 = 유저.고유번호
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last 소유자 because 유저 exists.'
+      GOTO error
+    END
+
+
+    /* erwin Builtin Trigger */
+    RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+CREATE TRIGGER tU_소유자 ON 소유자 FOR UPDATE AS
+/* erwin Builtin Trigger */
+/* UPDATE trigger on 소유자 */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @ins고유번호 integer,
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+  /* erwin Builtin Trigger */
+  /* 소유자  주차장 on parent update no action */
+  /* ERWIN_RELATION:CHECKSUM="0002547b", PARENT_OWNER="", PARENT_TABLE="소유자"
+    CHILD_OWNER="", CHILD_TABLE="주차장"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="제공", FK_COLUMNS="고유번호" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(고유번호)
+  BEGIN
+    IF EXISTS (
+      SELECT * FROM deleted,주차장
+      WHERE
+        /*  %JoinFKPK(주차장,deleted," = "," AND") */
+        주차장.고유번호 = deleted.고유번호
+    )
+    BEGIN
+      SELECT @errno  = 30005,
+             @errmsg = 'Cannot update 소유자 because 주차장 exists.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* 유저  소유자 on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="유저"
+    CHILD_OWNER="", CHILD_TABLE="소유자"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="Overlap_2", FK_COLUMNS="고유번호" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(고유번호)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,유저
+        WHERE
+          /* %JoinFKPK(inserted,유저) */
+          inserted.고유번호 = 유저.고유번호
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update 소유자 because 유저 does not exist.'
+      GOTO error
+    END
+  END
+
+
+  /* erwin Builtin Trigger */
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+
+
+CREATE TRIGGER tD_유저 ON 유저 FOR DELETE AS
+/* erwin Builtin Trigger */
+/* DELETE trigger on 유저 */
+BEGIN
+  DECLARE  @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+    /* erwin Builtin Trigger */
+    /* 유저  사용자 on parent delete cascade */
+    /* ERWIN_RELATION:CHECKSUM="0002439c", PARENT_OWNER="", PARENT_TABLE="유저"
+    CHILD_OWNER="", CHILD_TABLE="사용자"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="Overlap_3", FK_COLUMNS="고유번호" */
+    DELETE 사용자
+      FROM 사용자,deleted
+      WHERE
+        /*  %JoinFKPK(사용자,deleted," = "," AND") */
+        사용자.고유번호 = deleted.고유번호
+
+    /* erwin Builtin Trigger */
+    /* 유저  소유자 on parent delete cascade */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="유저"
+    CHILD_OWNER="", CHILD_TABLE="소유자"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="Overlap_2", FK_COLUMNS="고유번호" */
+    DELETE 소유자
+      FROM 소유자,deleted
+      WHERE
+        /*  %JoinFKPK(소유자,deleted," = "," AND") */
+        소유자.고유번호 = deleted.고유번호
+
+    /* erwin Builtin Trigger */
+    /* 유저  관리자 on parent delete cascade */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="유저"
+    CHILD_OWNER="", CHILD_TABLE="관리자"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="Overlap_1", FK_COLUMNS="고유번호" */
+    DELETE 관리자
+      FROM 관리자,deleted
+      WHERE
+        /*  %JoinFKPK(관리자,deleted," = "," AND") */
+        관리자.고유번호 = deleted.고유번호
+
+
+    /* erwin Builtin Trigger */
+    RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+CREATE TRIGGER tU_유저 ON 유저 FOR UPDATE AS
+/* erwin Builtin Trigger */
+/* UPDATE trigger on 유저 */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @ins고유번호 integer,
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+  /* erwin Builtin Trigger */
+  /* 유저  사용자 on parent update cascade */
+  /* ERWIN_RELATION:CHECKSUM="0003ebc4", PARENT_OWNER="", PARENT_TABLE="유저"
+    CHILD_OWNER="", CHILD_TABLE="사용자"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="Overlap_3", FK_COLUMNS="고유번호" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(고유번호)
+  BEGIN
+    IF @numrows = 1
+    BEGIN
+      SELECT @ins고유번호 = inserted.고유번호
+        FROM inserted
+      UPDATE 사용자
+      SET
+        /*  %JoinFKPK(사용자,@ins," = ",",") */
+        사용자.고유번호 = @ins고유번호
+      FROM 사용자,inserted,deleted
+      WHERE
+        /*  %JoinFKPK(사용자,deleted," = "," AND") */
+        사용자.고유번호 = deleted.고유번호
+    END
+    ELSE
+    BEGIN
+      SELECT @errno = 30006,
+             @errmsg = 'Cannot cascade 유저 update because more than one row has been affected.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* 유저  소유자 on parent update cascade */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="유저"
+    CHILD_OWNER="", CHILD_TABLE="소유자"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="Overlap_2", FK_COLUMNS="고유번호" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(고유번호)
+  BEGIN
+    IF @numrows = 1
+    BEGIN
+      SELECT @ins고유번호 = inserted.고유번호
+        FROM inserted
+      UPDATE 소유자
+      SET
+        /*  %JoinFKPK(소유자,@ins," = ",",") */
+        소유자.고유번호 = @ins고유번호
+      FROM 소유자,inserted,deleted
+      WHERE
+        /*  %JoinFKPK(소유자,deleted," = "," AND") */
+        소유자.고유번호 = deleted.고유번호
+    END
+    ELSE
+    BEGIN
+      SELECT @errno = 30006,
+             @errmsg = 'Cannot cascade 유저 update because more than one row has been affected.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* 유저  관리자 on parent update cascade */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="유저"
+    CHILD_OWNER="", CHILD_TABLE="관리자"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="Overlap_1", FK_COLUMNS="고유번호" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(고유번호)
+  BEGIN
+    IF @numrows = 1
+    BEGIN
+      SELECT @ins고유번호 = inserted.고유번호
+        FROM inserted
+      UPDATE 관리자
+      SET
+        /*  %JoinFKPK(관리자,@ins," = ",",") */
+        관리자.고유번호 = @ins고유번호
+      FROM 관리자,inserted,deleted
+      WHERE
+        /*  %JoinFKPK(관리자,deleted," = "," AND") */
+        관리자.고유번호 = deleted.고유번호
+    END
+    ELSE
+    BEGIN
+      SELECT @errno = 30006,
+             @errmsg = 'Cannot cascade 유저 update because more than one row has been affected.'
+      GOTO error
+    END
+  END
+
+
+  /* erwin Builtin Trigger */
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+
+
+CREATE TRIGGER tD_자리 ON 자리 FOR DELETE AS
+/* erwin Builtin Trigger */
+/* DELETE trigger on 자리 */
+BEGIN
+  DECLARE  @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+    /* erwin Builtin Trigger */
+    /* 주차장  자리 on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00013aec", PARENT_OWNER="", PARENT_TABLE="주차장"
+    CHILD_OWNER="", CHILD_TABLE="자리"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="소속", FK_COLUMNS="주차장번호" */
+    IF EXISTS (SELECT * FROM deleted,주차장
+      WHERE
+        /* %JoinFKPK(deleted,주차장," = "," AND") */
+        deleted.주차장번호 = 주차장.주차장번호 AND
+        NOT EXISTS (
+          SELECT * FROM 자리
+          WHERE
+            /* %JoinFKPK(자리,주차장," = "," AND") */
+            자리.주차장번호 = 주차장.주차장번호
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last 자리 because 주차장 exists.'
+      GOTO error
+    END
+
+
+    /* erwin Builtin Trigger */
+    RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+CREATE TRIGGER tU_자리 ON 자리 FOR UPDATE AS
+/* erwin Builtin Trigger */
+/* UPDATE trigger on 자리 */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @ins자리번호 int, 
+           @ins주차장번호 int,
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+  /* erwin Builtin Trigger */
+  /* 주차장  자리 on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="00015cb4", PARENT_OWNER="", PARENT_TABLE="주차장"
+    CHILD_OWNER="", CHILD_TABLE="자리"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="소속", FK_COLUMNS="주차장번호" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(주차장번호)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,주차장
+        WHERE
+          /* %JoinFKPK(inserted,주차장) */
+          inserted.주차장번호 = 주차장.주차장번호
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update 자리 because 주차장 does not exist.'
+      GOTO error
+    END
+  END
+
+
+  /* erwin Builtin Trigger */
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+
+
+CREATE TRIGGER tD_주차장 ON 주차장 FOR DELETE AS
+/* erwin Builtin Trigger */
+/* DELETE trigger on 주차장 */
+BEGIN
+  DECLARE  @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+    /* erwin Builtin Trigger */
+    /* 주차장  리뷰 on parent delete no action */
+    /* ERWIN_RELATION:CHECKSUM="0005c7f3", PARENT_OWNER="", PARENT_TABLE="주차장"
+    CHILD_OWNER="", CHILD_TABLE="리뷰"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="평가", FK_COLUMNS="주차장번호" */
+    IF EXISTS (
+      SELECT * FROM deleted,리뷰
+      WHERE
+        /*  %JoinFKPK(리뷰,deleted," = "," AND") */
+        리뷰.주차장번호 = deleted.주차장번호
+    )
+    BEGIN
+      SELECT @errno  = 30001,
+             @errmsg = 'Cannot delete 주차장 because 리뷰 exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* 주차장  사용이력 on parent delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="주차장"
+    CHILD_OWNER="", CHILD_TABLE="사용이력"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="사용2", FK_COLUMNS="주차장번호" */
+    IF EXISTS (
+      SELECT * FROM deleted,사용이력
+      WHERE
+        /*  %JoinFKPK(사용이력,deleted," = "," AND") */
+        사용이력.주차장번호 = deleted.주차장번호
+    )
+    BEGIN
+      SELECT @errno  = 30001,
+             @errmsg = 'Cannot delete 주차장 because 사용이력 exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* 주차장  자리 on parent delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="주차장"
+    CHILD_OWNER="", CHILD_TABLE="자리"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="소속", FK_COLUMNS="주차장번호" */
+    IF EXISTS (
+      SELECT * FROM deleted,자리
+      WHERE
+        /*  %JoinFKPK(자리,deleted," = "," AND") */
+        자리.주차장번호 = deleted.주차장번호
+    )
+    BEGIN
+      SELECT @errno  = 30001,
+             @errmsg = 'Cannot delete 주차장 because 자리 exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* 주차장  관리기록 on parent delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="주차장"
+    CHILD_OWNER="", CHILD_TABLE="관리기록"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="구청_관리", FK_COLUMNS="주차장번호" */
+    IF EXISTS (
+      SELECT * FROM deleted,관리기록
+      WHERE
+        /*  %JoinFKPK(관리기록,deleted," = "," AND") */
+        관리기록.주차장번호 = deleted.주차장번호
+    )
+    BEGIN
+      SELECT @errno  = 30001,
+             @errmsg = 'Cannot delete 주차장 because 관리기록 exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* 소유자  주차장 on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="소유자"
+    CHILD_OWNER="", CHILD_TABLE="주차장"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="제공", FK_COLUMNS="고유번호" */
+    IF EXISTS (SELECT * FROM deleted,소유자
+      WHERE
+        /* %JoinFKPK(deleted,소유자," = "," AND") */
+        deleted.고유번호 = 소유자.고유번호 AND
+        NOT EXISTS (
+          SELECT * FROM 주차장
+          WHERE
+            /* %JoinFKPK(주차장,소유자," = "," AND") */
+            주차장.고유번호 = 소유자.고유번호
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last 주차장 because 소유자 exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* 관리자  주차장 on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="관리자"
+    CHILD_OWNER="", CHILD_TABLE="주차장"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="관리", FK_COLUMNS="고유번호" */
+    IF EXISTS (SELECT * FROM deleted,관리자
+      WHERE
+        /* %JoinFKPK(deleted,관리자," = "," AND") */
+        deleted.고유번호 = 관리자.고유번호 AND
+        NOT EXISTS (
+          SELECT * FROM 주차장
+          WHERE
+            /* %JoinFKPK(주차장,관리자," = "," AND") */
+            주차장.고유번호 = 관리자.고유번호
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last 주차장 because 관리자 exists.'
+      GOTO error
+    END
+
+
+    /* erwin Builtin Trigger */
+    RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+CREATE TRIGGER tU_주차장 ON 주차장 FOR UPDATE AS
+/* erwin Builtin Trigger */
+/* UPDATE trigger on 주차장 */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @ins주차장번호 int,
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+  /* erwin Builtin Trigger */
+  /* 주차장  리뷰 on parent update no action */
+  /* ERWIN_RELATION:CHECKSUM="0006d0ac", PARENT_OWNER="", PARENT_TABLE="주차장"
+    CHILD_OWNER="", CHILD_TABLE="리뷰"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="평가", FK_COLUMNS="주차장번호" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(주차장번호)
+  BEGIN
+    IF EXISTS (
+      SELECT * FROM deleted,리뷰
+      WHERE
+        /*  %JoinFKPK(리뷰,deleted," = "," AND") */
+        리뷰.주차장번호 = deleted.주차장번호
+    )
+    BEGIN
+      SELECT @errno  = 30005,
+             @errmsg = 'Cannot update 주차장 because 리뷰 exists.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* 주차장  사용이력 on parent update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="주차장"
+    CHILD_OWNER="", CHILD_TABLE="사용이력"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="사용2", FK_COLUMNS="주차장번호" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(주차장번호)
+  BEGIN
+    IF EXISTS (
+      SELECT * FROM deleted,사용이력
+      WHERE
+        /*  %JoinFKPK(사용이력,deleted," = "," AND") */
+        사용이력.주차장번호 = deleted.주차장번호
+    )
+    BEGIN
+      SELECT @errno  = 30005,
+             @errmsg = 'Cannot update 주차장 because 사용이력 exists.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* 주차장  자리 on parent update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="주차장"
+    CHILD_OWNER="", CHILD_TABLE="자리"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="소속", FK_COLUMNS="주차장번호" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(주차장번호)
+  BEGIN
+    IF EXISTS (
+      SELECT * FROM deleted,자리
+      WHERE
+        /*  %JoinFKPK(자리,deleted," = "," AND") */
+        자리.주차장번호 = deleted.주차장번호
+    )
+    BEGIN
+      SELECT @errno  = 30005,
+             @errmsg = 'Cannot update 주차장 because 자리 exists.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* 주차장  관리기록 on parent update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="주차장"
+    CHILD_OWNER="", CHILD_TABLE="관리기록"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="구청_관리", FK_COLUMNS="주차장번호" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(주차장번호)
+  BEGIN
+    IF EXISTS (
+      SELECT * FROM deleted,관리기록
+      WHERE
+        /*  %JoinFKPK(관리기록,deleted," = "," AND") */
+        관리기록.주차장번호 = deleted.주차장번호
+    )
+    BEGIN
+      SELECT @errno  = 30005,
+             @errmsg = 'Cannot update 주차장 because 관리기록 exists.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* 소유자  주차장 on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="소유자"
+    CHILD_OWNER="", CHILD_TABLE="주차장"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="제공", FK_COLUMNS="고유번호" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(고유번호)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,소유자
+        WHERE
+          /* %JoinFKPK(inserted,소유자) */
+          inserted.고유번호 = 소유자.고유번호
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    select @nullcnt = count(*) from inserted where
+      inserted.고유번호 IS NULL
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update 주차장 because 소유자 does not exist.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* 관리자  주차장 on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="관리자"
+    CHILD_OWNER="", CHILD_TABLE="주차장"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="관리", FK_COLUMNS="고유번호" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(고유번호)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,관리자
+        WHERE
+          /* %JoinFKPK(inserted,관리자) */
+          inserted.고유번호 = 관리자.고유번호
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    select @nullcnt = count(*) from inserted where
+      inserted.고유번호 IS NULL
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update 주차장 because 관리자 does not exist.'
+      GOTO error
+    END
+  END
+
+
+  /* erwin Builtin Trigger */
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+
+
+CREATE TRIGGER tD_차량 ON 차량 FOR DELETE AS
+/* erwin Builtin Trigger */
+/* DELETE trigger on 차량 */
+BEGIN
+  DECLARE  @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+    /* erwin Builtin Trigger */
+    /* 사용자  차량 on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="0001390b", PARENT_OWNER="", PARENT_TABLE="사용자"
+    CHILD_OWNER="", CHILD_TABLE="차량"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="소유", FK_COLUMNS="고유번호" */
+    IF EXISTS (SELECT * FROM deleted,사용자
+      WHERE
+        /* %JoinFKPK(deleted,사용자," = "," AND") */
+        deleted.고유번호 = 사용자.고유번호 AND
+        NOT EXISTS (
+          SELECT * FROM 차량
+          WHERE
+            /* %JoinFKPK(차량,사용자," = "," AND") */
+            차량.고유번호 = 사용자.고유번호
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last 차량 because 사용자 exists.'
+      GOTO error
+    END
+
+
+    /* erwin Builtin Trigger */
+    RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+CREATE TRIGGER tU_차량 ON 차량 FOR UPDATE AS
+/* erwin Builtin Trigger */
+/* UPDATE trigger on 차량 */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @ins차량번호 char(18),
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+  /* erwin Builtin Trigger */
+  /* 사용자  차량 on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="000181d7", PARENT_OWNER="", PARENT_TABLE="사용자"
+    CHILD_OWNER="", CHILD_TABLE="차량"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="소유", FK_COLUMNS="고유번호" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(고유번호)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,사용자
+        WHERE
+          /* %JoinFKPK(inserted,사용자) */
+          inserted.고유번호 = 사용자.고유번호
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    select @nullcnt = count(*) from inserted where
+      inserted.고유번호 IS NULL
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update 차량 because 사용자 does not exist.'
+      GOTO error
+    END
+  END
+
+
+  /* erwin Builtin Trigger */
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
