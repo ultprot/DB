@@ -52,6 +52,9 @@ void main() {
 	int sayong = 0;
 	int *sayong_num = new int[cin_int[0]];
 
+	int gwan = 0;
+	int *gwan_num = new int[cin_int[0]];
+	
 
 	//Block1, 유저 생성 (생성과 동시에 관리자 소유자 사용자 지정)
 	for (int i = 0; i < cin_int[0]; i++) {
@@ -75,6 +78,7 @@ void main() {
 		if ((rand() % 2) == 0) {//50%확률로 관리자
 			fprintf(openPointer, "Insert INTO 관리자\n", out_str);
 			fprintf(openPointer, "values (%d,'%d:%d:%d','%d-%d-%d','%d:%d:%d','%d-%d-%d')\n", i + 1, rand() % 24, rand() % 60, rand() % 60,  1950 + rand() % 60, 1 + rand() % 12, 1 + rand() % 28, rand() % 24, rand() % 60, rand() % 60, 1950 + rand() % 60, 1 + rand() % 12, 1 + rand() % 28,  out_str);
+			gwan_num[gwan] = i + 1;  gwan++;
 		}
 
 		fprintf(openPointer, "\n", out_str);
@@ -100,7 +104,7 @@ void main() {
 	for (int i = 0; i < cin_int[3]; i++) {
 		fprintf(openPointer, "Insert INTO 주차장\n", out_str);
 		full = 10 + rand() % 1000;
-		fprintf(openPointer, "values (%d,%d,%d,'%s',%d.%d,%d,'%d:%d:%d','%d:%d:%d',%d,%d,NULL, %d.%d)\n", i + 1, rand() % 100, rand() % 3, random_string(rand() % 40), rand() % 10000, rand() % 1000, rand() % 1000, rand() % 24, rand() % 60, rand() % 60, rand() % 24, rand() % 60, rand() % 60, full, rand()% full, soyu_num[rand()%soyu], rand() % 10000, rand() % 1000, out_str);
+		fprintf(openPointer, "values (%d,%d,%d,'%s',%d.%d,%d,'%d:%d:%d','%d:%d:%d',%d,%d,%d, %d.%d)\n", i + 1, rand() % 100, rand() % 3, random_string(rand() % 40), rand() % 10000, rand() % 1000, rand() % 1000, rand() % 24, rand() % 60, rand() % 60, rand() % 24, rand() % 60, rand() % 60, full, rand()% full, soyu_num[rand()%soyu],gwan_num[rand()%gwan], rand() % 10000, rand() % 1000, out_str);
 	
 		//Block3.2 자리생성
 		randint = rand() % cin_int[5];
