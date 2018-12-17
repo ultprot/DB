@@ -7,9 +7,9 @@
 
   userID=session.contents("userID")
 
-  sql="select 유저.아이디, 차량.차종, 차량.차량번호, 차량.고유번호 "_
-  & "from 차량 join 사용자 on 차량.고유번호= 사용자.고유번호 "_ 
-  & "join 유저 on 유저.고유번호= 사용자.고유번호 "_
+  sql="select  유저.아이디, * "_
+  & "from 주차장 join 소유자 on 주차장.고유번호=소유자.고유번호 "_ 
+  & "join 유저 on 유저.고유번호 = 소유자.고유번호 "_
   & "where 유저.아이디 = '" & userID & "'"
 
   Set Rs=Dbcon.Execute(sql)
@@ -22,29 +22,28 @@
       <!-- Breadcrumbs-->
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
-          사용자 정보
+          소유자 정보
         </li>
       </ol>
 
       <div class="container">
-        <div class="d-flex justify-content-end">
-            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#myModal">
-                추가
-            </button>
-        </div>
         <div class="card mb-3">
             <div class="card-header">
                 <i class="fas fa-table"></i>
-                소유차량
+                소유 주차장
             </div>
             <div class="card-body">
                 <div class="table-responsive"> 
                     <table class="table table-bordered" id="dataTable">
                         <thead>
                             <tr>
-                                <th>차종</th>
-                                <th>차량번호</th>
-                                <th>고유번호</th>
+                                <th>주차장 번호</th>
+                                <th>시간당 요금</th>
+                                <th>종류</th>
+                                <th>주소</th>
+                                <th>최대 이용 시간</th>
+                                <th>개장시간</th>
+                                <th>폐장시간</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -53,13 +52,25 @@
                             do while not(Rs.EOF)
                                 response.write("<tr>")
                                 response.write("<td>")
-                                response.write(Rs("차종"))
+                                response.write(Rs("주차장번호"))
                                 response.write("</td>")
                                 response.write("<td>")
-                                response.write(Rs("차량번호"))
+                                response.write(Rs("시간당_요금"))
                                 response.write("</td>")
                                 response.write("<td>")
-                                response.write(Rs("고유번호"))
+                                response.write(Rs("종류"))
+                                response.write("</td>")
+                                response.write("<td>")
+                                response.write(Rs("주소"))
+                                response.write("</td>")
+                                response.write("<td>")
+                                response.write(Rs("최대이용시간"))
+                                response.write("</td>")
+                                response.write("<td>")
+                                response.write(Rs("개장시간"))
+                                response.write("</td>")
+                                response.write("<td>")
+                                response.write(Rs("폐장시간"))
                                 response.write("</td>")
                                 response.write("<td>")
                                 response.write("<form action=""#"" method=""post"">")

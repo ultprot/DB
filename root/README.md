@@ -1,5 +1,6 @@
 #DB 설계 웹 애플리케이션
 ## 파일 설명
+### 기본 파일
 * main.html 
     * 웹 애플리케이션 진입점
 * login.asp
@@ -14,5 +15,13 @@
     * 페이지 푸터 파일
 * logout.asp
     * 로그아웃 파일
+### 사용자 관련 정보 조회
 * myCar.asp
     * 사용자 차량 조회
+* myReview.asp
+    * 사용자 리뷰 조회
+* myUsageRecord.asp
+    * 사용자 사용 기록 조회
+### 소유자 관련 정보
+* myParkingPlace.asp
+    * 소유자 정보 조회
