@@ -2,6 +2,7 @@
 #include <fstream>
 #include <stdlib.h>
 #include <string>
+#include <time.h>
 #pragma warning(disable:4996)
 using namespace std;
 
@@ -9,6 +10,9 @@ char* random_string(int size) {
 	char *strChar = new char[size];
 	for (int i = 0; i < size; i++) {
 		strChar[i] = 97 + rand() % 25;
+		if (rand() % 10 == 0) {
+			strChar[i] = 32;
+		}
 	}
 	strChar[size] = 0;
 	return strChar;
@@ -27,143 +31,258 @@ void main() {
 	openPointer = fopen("output.txt", "w+");
 	char out_str[100] = { 0, };
 	//fclose(openPointer);
+	//fprintf(openPointer, "Insert INTO 소유자\n", out_str);
+	//fprintf(openPointer, "values (%d,%s)\n", i + 1, random_string_number(15), out_str);
+	int i, j;
 
-	//입력예제
-	int k = 0;
-	//fprintf(openPointer, "어어 ", out_str);
-	//랜덤 : rand()사용
 
-	int cin_int[8];
-	cout << "<<Random Instance Maker>>\n";
-	cout << "유저 수: "; cin >> cin_int[0];
-	cout << "차량 수: "; cin >> cin_int[1];
-	cout << "구청 수: "; cin >> cin_int[2];
-	cout << "주차장 수: "; cin >> cin_int[3];
-	cout << "관리기록 수 :"; cin >> cin_int[4];
-	cout << "최대 자리 수 : "; cin >> cin_int[5];
-	cout << "리뷰 개수 : "; cin >> cin_int[6];
-	cout << "사용이력 수 : "; cin >> cin_int[7];
-
-	
-	//소유자 수 + 소유자 번호 지정
-	int soyu = 0;
-	int *soyu_num = new int[cin_int[0]];
-
-	int sayong = 0;
-	int *sayong_num = new int[cin_int[0]];
-
-	int gwan = 0;
-	int *gwan_num = new int[cin_int[0]];
+	/*
+	ㅁ관리기록(관리일자,구청_고유번호,주차장_번호)
+	ㅁ관리자(근무_시작시간,근무_종료시간,근무_시작기간,근무_종료기간,관리자_고유번호
+	ㅁ구청(구청_고유번호, 구_명칭)
+	ㅁ리뷰(리뷰번호,평점,내용,주차장_번호,사용자_고유번호
+	ㅁ사용이력(주차_시작시간,주차종료시간,납부한요금,총요금,사용자_고유번호,주차장번호
+	ㅁ사용자(사용자_고유번호
+	ㅁ소유자(계좌,소유자_고유번호
+	ㅁ유저(고유번호,생년월일,전화번호,아이디,비밀번호
+	ㅁ자리(자리번호,현재_사용여부,수용차종,주차장_번호,이용대상
+	ㅁ주차장(주차장_번호,구청_관리주기,시간당요금,종류,주소,x좌표,y좌표,최대이용시간,개장시간,폐장시간,구청_고유번호,관리자_고유번호,소유자_고유번호
+	ㅁ차량(차량번호,차종
+	ㅁ차량소유(사용자고유번호,차량번호
 	
 
-	//Block1, 유저 생성 (생성과 동시에 관리자 소유자 사용자 지정)
-	for (int i = 0; i < cin_int[0]; i++) {
+	<생성>
+	구청x10 (중구, 동구, 미추홀구, 연수구, 남동구, 부평구, 계양구, 서구, 강화군, 옹진군) 1~10
+	유저x500번 확률탐색 관리자20% 소유자10% 사용자95%
+	차량x200번 차량소유x250
+	주차장x50 (자리 주차장 당 최대 50개)
+	사용이력x1000 //종료시간 NULL값 가능하게 할것
+	리뷰x100
+	관리기록 주차장별로 1~5개씩
+	*/
+
+
+	//Block1 구청생성
+	fprintf(openPointer, "Insert INTO 구청\n", out_str);
+	fprintf(openPointer, "values (1,'중구')\n", out_str);
+	fprintf(openPointer, "Insert INTO 구청\n", out_str);
+	fprintf(openPointer, "values (2,'동구')\n", out_str);
+	fprintf(openPointer, "Insert INTO 구청\n", out_str);
+	fprintf(openPointer, "values (3,'미추홀구')\n", out_str);
+	fprintf(openPointer, "Insert INTO 구청\n", out_str);
+	fprintf(openPointer, "values (4,'연수구')\n", out_str);
+	fprintf(openPointer, "Insert INTO 구청\n", out_str);
+	fprintf(openPointer, "values (5,'남동구')\n", out_str);
+	fprintf(openPointer, "Insert INTO 구청\n", out_str);
+	fprintf(openPointer, "values (6,'부평구')\n", out_str);
+	fprintf(openPointer, "Insert INTO 구청\n", out_str);
+	fprintf(openPointer, "values (7,'계양구')\n", out_str);
+	fprintf(openPointer, "Insert INTO 구청\n", out_str);
+	fprintf(openPointer, "values (8,'서구')\n", out_str);
+	fprintf(openPointer, "Insert INTO 구청\n", out_str);
+	fprintf(openPointer, "values (9,'강화군')\n", out_str);
+	fprintf(openPointer, "Insert INTO 구청\n", out_str);
+	fprintf(openPointer, "values (10,'웅진군')\n\n\n", out_str);
+	fclose(openPointer);
+
+	cout << "구청생성 완료" << endl;
+
+	//Block2 유저생성
+	openPointer = fopen("output.txt", "a");
+	int Gwan = 0; int So = 0; int Sa = 0;
+	int *GwanNum; int *SoNum; int *SaNum;//First index is Not used
+	GwanNum = new int[200]; SoNum = new int[100]; SaNum = new int[510];
+	int c1 = 2015 + rand() % 2; int c2 = rand() % 12; int c3 = rand() % 27;
+	int check;
+	for (i = 0; i < 500; i++) {
+		check = 0;
+	
 		fprintf(openPointer, "Insert INTO 유저\n", out_str);
-		fprintf(openPointer, "values (%d,'%s','%s','%s','%d-%d-%d')\n", i + 1, random_string(5+rand() % 10), random_string(5+rand() % 10), random_string_number(11), 1950 + rand() % 60, 1 + rand() % 12, 1 + rand() % 28, out_str);
+		fprintf(openPointer, "values (%d,'%d-%d-%d','010%4d%4d','%s','%s')\n", i + 1, 1940 + rand() % 70, rand()%12+1,rand()%28+1,rand() % 10000, random_string(5 + rand() % 10), random_string(5 + rand() % 10), out_str);
 
-		if ((rand() % 2) == 0) {//50%확률로 사용자
-			fprintf(openPointer, "Insert INTO 사용자\n", out_str);
-			fprintf(openPointer, "values (%d,%d.%d,%d.%d)\n", i + 1, rand()%10000, rand() % 1000, rand()%10000, rand() % 1000, out_str);
-
-			sayong_num[sayong] = i+1;
-			sayong++;
-		}
-		if ((rand() % 2) == 0) {//50%확률로 소유자
-			fprintf(openPointer, "Insert INTO 소유자\n", out_str);
-			fprintf(openPointer, "values (%d,%s)\n", i + 1, random_string_number(15), out_str);
-
-			soyu_num[soyu] = i+1;
-			soyu++;
-		}
-		if ((rand() % 2) == 0) {//50%확률로 관리자
+		if (rand() % 100 < 20) {
+			check = 1;
+			Gwan++;
+			GwanNum[Gwan] = i+1;
 			fprintf(openPointer, "Insert INTO 관리자\n", out_str);
-			fprintf(openPointer, "values (%d,'%d:%d:%d','%d-%d-%d','%d:%d:%d','%d-%d-%d')\n", i + 1, rand() % 24, rand() % 60, rand() % 60,  1950 + rand() % 60, 1 + rand() % 12, 1 + rand() % 28, rand() % 24, rand() % 60, rand() % 60, 1950 + rand() % 60, 1 + rand() % 12, 1 + rand() % 28,  out_str);
-			gwan_num[gwan] = i + 1;  gwan++;
+			int check = rand() % 2;
+			c1 = 2015 + rand() % 2; c2 = rand() % 12; c3 = rand() % 27;
+			if (check == 0) { fprintf(openPointer, "values ('%d:%d0:00','%d:%d0:00','%d-%d-%d',DATEADD (DAY , %d, '%d-%d-%d' ),%d)\n", rand() % 24, rand() % 6, rand() % 24, rand() % 6, c1, c2, c3, rand() % 1050, c1, c2, c3, i+1, out_str); }
+			else { fprintf(openPointer, "values ('%d:%d0:00','%d:%d0:00','%d-%d-%d',NULL,%d)\n", rand() % 24, rand() % 6, rand() % 24, rand() % 6, c1, c2, c3, i+1, out_str); }
+			
 		}
-
-		fprintf(openPointer, "\n", out_str);
-	}
-	fclose(openPointer);
-	cout << "유저 생성 완료" << endl;
-
-
-
-	openPointer = fopen("output.txt", "a");
-	//Block2, 구청 생성
-	for (int i = 0; i < cin_int[2]; i++) {
-		fprintf(openPointer, "Insert INTO 구청\n", out_str);
-		fprintf(openPointer, "values (%d,'%s')\n\n", i + 1, random_string(rand() % 20), out_str);
-	}
-	fclose(openPointer);
-	cout << "구청 생성 완료" << endl;
-
-
-	openPointer = fopen("output.txt", "a");
-	//Block3, 주차장 생성
-	int full = 0; int randint = 0;
-	for (int i = 0; i < cin_int[3]; i++) {
-		fprintf(openPointer, "Insert INTO 주차장\n", out_str);
-		full = 10 + rand() % 1000;
-		fprintf(openPointer, "values (%d,%d,%d,'%s',%d.%d,%d,'%d:%d:%d','%d:%d:%d',%d,%d,%d, %d.%d)\n", i + 1, rand() % 100, rand() % 3, random_string(rand() % 40), rand() % 10000, rand() % 1000, rand() % 1000, rand() % 24, rand() % 60, rand() % 60, rand() % 24, rand() % 60, rand() % 60, full, rand()% full, soyu_num[rand()%soyu],gwan_num[rand()%gwan], rand() % 10000, rand() % 1000, out_str);
-	
-		//Block3.2 자리생성
-		randint = rand() % cin_int[5];
-		for (int j = 0; j < randint; j++) {
-			fprintf(openPointer, "Insert INTO 자리\n", out_str);
-			fprintf(openPointer, "values (%d,%d,%d,%d,%d,%d)\n", j+1, rand()%2, rand()%200,  rand()%3, i + 1, rand() % 500, out_str);
+		if (rand() % 100 < 10) {
+			check = 1;
+			So++;
+			SoNum[So] = i+1;
+			fprintf(openPointer, "Insert INTO 소유자\n", out_str);
+			fprintf(openPointer, "values ('%d',%d)\n", rand()%10000000,i+1,out_str);
 		}
-		fprintf(openPointer, "\n", out_str);
+		if (rand() % 100 < 40) {
+			check = 1;
+			Sa++;
+			SaNum[Sa] = i+1;
+			fprintf(openPointer, "Insert INTO 사용자\n", out_str);
+			fprintf(openPointer, "values (%d)\n", i+1, out_str);
+		}
+		if (check == 0) {//사용자로 채움
+			Sa++;
+			SaNum[Sa] = i+1;
+			fprintf(openPointer, "Insert INTO 사용자\n", out_str);
+			fprintf(openPointer, "values (%d)\n", i+1, out_str);
+		}
 	}
+	fprintf(openPointer, "\n\n\n",  out_str);
 	fclose(openPointer);
-	cout << "주차장 생성 완료" << endl;
 
+	cout << "유저생성 완료" << endl;
 
-
+	//Block3 차량 생성
 	openPointer = fopen("output.txt", "a");
-	//Block4, 차량 생성
-	for (int i = 0; i < cin_int[1]; i++) {
+	int *charNUM;
+	charNUM = new int[201];
+	for (i = 0; i < 200; i++) {
 		fprintf(openPointer, "Insert INTO 차량\n", out_str);
-		fprintf(openPointer, "values (%d,'%s', %d)\n", i + 1, random_string(rand() % 20), sayong_num[rand()%sayong], out_str);
+		charNUM[i + 1] = rand() % 10000;
+		fprintf(openPointer, "values ('%4d',%d)\n", charNUM[i + 1],rand()%3, out_str);
 	}
-	fprintf(openPointer, "\n", out_str);
+	fprintf(openPointer, "\n\n\n", out_str);
 	fclose(openPointer);
-	cout << "차량 생성 완료" << endl;
 
+	cout << "차량생성 완료" << endl;
 
+	//Block4 차량소유 생성
 	openPointer = fopen("output.txt", "a");
-	//Block5, 관리기록 생성
-	for (int i = 0; i < cin_int[4]; i++) {
-		fprintf(openPointer, "Insert INTO 관리기록\n", out_str);
-		fprintf(openPointer, "values ('%d-%d-%d',%d,%d)\n",  1950 + rand() % 60, 1 + rand() % 12, 1 + rand() % 28, rand() % cin_int[2]+1, rand() % cin_int[3]+1, out_str);
+	for (i = 0; i < 200; i++) {
+		fprintf(openPointer, "Insert INTO 차량소유\n", out_str);
+		fprintf(openPointer, "values (%d,%d)\n",SaNum[rand()%Sa + 1],charNUM[i+1] , out_str);
 	}
-	fprintf(openPointer, "\n", out_str);
-	fclose(openPointer);
-	cout << "관리기록 생성 완료" << endl;
-
-
-	openPointer = fopen("output.txt", "a");
-	//Block6, 리뷰 생성
-	for (int i = 0; i < cin_int[6]; i++) {
-		fprintf(openPointer, "Insert INTO 리뷰\n", out_str);
-		fprintf(openPointer, "values (%d,'%s',%d,%d,%d)\n", i + 1, random_string(rand() % 100), rand() % 5, rand() % cin_int[3]+1, sayong_num[rand() % sayong],out_str);
+	for (i = 0; i < 50; i++) {
+		fprintf(openPointer, "Insert INTO 차량소유\n", out_str);
+		fprintf(openPointer, "values (%d,%d)\n", SaNum[rand() % Sa + 1], charNUM[rand()%200+1], out_str);
 	}
-	fprintf(openPointer, "\n", out_str);
+	fprintf(openPointer, "\n\n\n", out_str);
 	fclose(openPointer);
-	cout << "리뷰 생성 완료" << endl;
 
+	delete charNUM;
 
+	cout << "차량소유생성 완료" << endl;
+	
+	//Block5 주차장생성
 	openPointer = fopen("output.txt", "a");
-	//Block7, 사용이력 생성
-	for (int i = 0; i < cin_int[7]; i++) {
+	int *usingZari; usingZari = new int[51];
+	int *Guchung_Parking; Guchung_Parking = new int[51];
+	for (i = 0; i < 51; i++) usingZari[i] = 0;
+	int zari; int GC;
+	for (i = 0; i < 50; i++) {
+		usingZari[i + 1] = 0;
+		GC = rand() % 10 + 1; Guchung_Parking[i + 1] = GC;
+		fprintf(openPointer, "Insert INTO 주차장\n", out_str);
+		if(rand()%100<75){ 
+			fprintf(openPointer, "values (%d,%d,%d00,%d,'", i+1,rand()%10+25,rand()%100,rand()%2,out_str); 
+			if (GC == 1) { fprintf(openPointer, "중구", out_str); }
+			if (GC == 2) { fprintf(openPointer, "동구", out_str); }
+			if (GC == 3) { fprintf(openPointer, "미추홀구", out_str); }
+			if (GC == 4) { fprintf(openPointer, "연수구", out_str); }
+			if (GC == 5) { fprintf(openPointer, "남동구", out_str); }
+			if (GC == 6) { fprintf(openPointer, "부평구", out_str); }
+			if (GC == 7) { fprintf(openPointer, "계양구", out_str); }
+			if (GC == 8) { fprintf(openPointer, "서구", out_str); }
+			if (GC == 9) { fprintf(openPointer, "강화군", out_str); }
+			if (GC == 10) { fprintf(openPointer, "옹진군", out_str); }
+			fprintf(openPointer, " %d-%d',%d,%d,%d0,'%d:%d0:00','%d:%d0:00',%d,%d,NULL)\n",rand()%300,rand()%100,rand() % 10000, rand() % 10000, rand() % 60, rand() % 24, rand() % 6, rand() % 24, rand() % 6, GC, GwanNum[rand() % Gwan + 1], out_str);
+		}//소유자 없을때
+		else { 
+			fprintf(openPointer, "values (%d,%d,%d00,%d,'", i + 1, rand() % 10 + 25, rand() % 100, rand() % 2, out_str);
+			if (GC == 1) { fprintf(openPointer, "중구", out_str); }
+			if (GC == 2) { fprintf(openPointer, "동구", out_str); }
+			if (GC == 3) { fprintf(openPointer, "미추홀구", out_str); }
+			if (GC == 4) { fprintf(openPointer, "연수구", out_str); }
+			if (GC == 5) { fprintf(openPointer, "남동구", out_str); }
+			if (GC == 6) { fprintf(openPointer, "부평구", out_str); }
+			if (GC == 7) { fprintf(openPointer, "계양구", out_str); }
+			if (GC == 8) { fprintf(openPointer, "서구", out_str); }
+			if (GC == 9) { fprintf(openPointer, "강화군", out_str); }
+			if (GC == 10) { fprintf(openPointer, "옹진군", out_str); }
+			fprintf(openPointer, " %d-%d',%d,%d,%d0,'%d:%d0:00','%d:%d0:00',%d,%d,%d)\n", rand() % 300, rand() % 100, rand() % 10000, rand() % 10000, rand() % 60, rand() % 24, rand() % 6, rand() % 24, rand() % 6, GC, GwanNum[rand() % Gwan + 1], SoNum[rand() % So + 1],out_str);
+		}
+		
+		
+		//Block6 자리생성
+		zari = rand() % 40 + 11;
+		for (j = 0; j < zari; j++) {
+			fprintf(openPointer, "Insert INTO 자리\n", out_str);
+			if (rand() % 100 < 1) { fprintf(openPointer, "values (%d,1,%d,%d,%d)\n", j + 1, rand() % 3, i + 1, rand() % 3, out_str); usingZari[i+1]++; }//사용중인 자리
+			else { fprintf(openPointer, "values (%d,0,%d,%d,%d)\n", j + 1, rand() % 3, i + 1, rand() % 3, out_str); }
+			
+		}
+	}fprintf(openPointer, "\n\n\n", out_str);
+	fclose(openPointer);
+
+	cout << "주차장생성 완료" << endl;
+
+	
+	//Block7 사용이력 생성
+	openPointer = fopen("output.txt", "a");
+	int Fee;
+	for (i = 0; i < 50; i++) {
+		for (j = 0; j < usingZari[i + 1]; j++) {
+			fprintf(openPointer, "Insert INTO 사용이력\n", out_str);
+			Fee = rand() % 60+1;
+			fprintf(openPointer, "values ('2018-11-%d %d:%d0:00',NULL,%d00,%d00,%d,%d)\n", 25 + rand() % 4, rand() % 24, rand() % 6, rand() % Fee, Fee, SaNum[rand() % Sa + 1], i + 1, out_str);
+		}
+	}
+	fclose(openPointer);
+	cout << "사용중인 이력 생성 완료" << endl;
+
+	int c4,c5;
+	openPointer = fopen("output.txt", "a");
+	for (i = 0; i < 1000; i++) {
+		
 		fprintf(openPointer, "Insert INTO 사용이력\n", out_str);
-		fprintf(openPointer, "values ('%d-%d-%d %d:%d:%d','%d-%d-%d %d:%d:%d',%d,%d,%d,%d)\n", 1950 + rand() % 60, 1 + rand() % 12, 1 + rand() % 28,  rand() % 24, rand() % 60, rand() % 60, 1950 + rand() % 60, 1 + rand() % 12, 1 + rand() % 28, rand() % 24, rand() % 60, rand() % 60, rand() % 100000, rand() % 100000, rand() % cin_int[3]+1, sayong_num[rand() % sayong], out_str);
-	}
-	fprintf(openPointer, "\n", out_str);
+		c1 = rand() % 3 + 2016;
+		c2 = rand() % 12 + 1;
+		c3 = rand() % 27 + 1;
+		c4 = rand() % 24;
+		c5 = rand() % 6;
+		Fee = rand() % 60+1;
+		fprintf(openPointer, "values ('%d-%d-%d %d:%d0:00',DATEADD(minute,%d,'%d-%d-%d %d:%d0:00'),%d00,%d00,%d,%d)\n", c1,c2,c3,c4,c5, rand()%600, c1, c2, c3, c4, c5, rand() % Fee, Fee,  SaNum[rand()%Sa + 1], i+1,out_str);
+	}fprintf(openPointer, "\n\n\n", out_str);
 	fclose(openPointer);
-	cout << "사용이력 생성 완료" << endl << endl << endl;
-
+	cout << "사용이력생성 완료" << endl;
 	
+	
+	//Block8 리뷰 생성
+	openPointer = fopen("output.txt", "a");
+	for (i = 0; i < 100; i++) {
+		fprintf(openPointer, "Insert INTO 리뷰\n", out_str);
+		fprintf(openPointer, "values (%d,%d,'%s',%d,%d)",i+1,rand()%5+1, random_string(10+rand()%20),rand()%50+1,SaNum[rand()%Sa+1], out_str);
+	}
+	fprintf(openPointer, "\n\n\n", out_str);
+	fclose(openPointer);
+	cout << "리뷰 완료" << endl;
+
+
+
+
+
+
+	//Block9 관리기록 생성 //주차장별 구청번호 입력
+	openPointer = fopen("output.txt", "a");
+	int cycle_int;
+	for (i = 0; i < 50; i++) {
+		cycle_int = rand() % 10+1;
+		for (j = 0; j < cycle_int; j++) {
+			fprintf(openPointer, "Insert INTO 관리기록\n", out_str);
+			fprintf(openPointer, "values ('201%d-%d-%d',%d,%d)\n", 6 + rand() % 3, Guchung_Parking[i + 1], i + 1, out_str);
+		}
+	}
+
+
+
+	fprintf(openPointer, "\n\n\n", out_str);
+	fclose(openPointer);
+	
+
 	cout << "output query => output.txt" << endl;
-
-	
 }
