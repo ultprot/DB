@@ -1,0 +1,2 @@
+Insert INTO 사용이력
+values (GETDATE(),NULL,1000,2000,500,500)
