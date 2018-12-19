@@ -117,7 +117,7 @@
         <div class="card mb-3">
             <div class="card-header">
                 <i class="fas fa-table"></i>
-                소유 주차장
+                검색된 주차장
             </div>
             <div class="card-body">
                 <div class="table-responsive"> 
@@ -125,6 +125,7 @@
                         <thead>
                             <tr>
                                 <th>주차장 번호</th>
+                                <th>거리</th>
                                 <th>주소</th>
                                 <th>종류</th>
                                 <th>최대 이용 시간</th>
@@ -141,6 +142,10 @@
                                 response.write("<tr>")
                                 response.write("<td>")
                                 response.write(Rs("주차장_번호"))
+                                response.write("</td>")
+                                response.write("<td>")
+                                response.write(Rs("distance"))
+                                response.write("미터")
                                 response.write("</td>")
                                 response.write("<td>")
                                 response.write(Rs("주소"))
@@ -168,9 +173,9 @@
                                 response.write(Rs("폐장시간"))
                                 response.write("</td>")
                                 response.write("<td>")
-                                response.write("<form action=""#"" method=""post"">")
-                                response.write("<button type=""submit"" class=""btn btn-secondary"">리뷰</button>")
-                                response.write("</form>")
+                                response.write("<a href=""parkReview.asp?parkNumber=")
+                                response.write(Rs("주차장_번호"))
+                                response.write(""" class=""btn btn-secondary"">리뷰</a>")
                                 response.write("</td>")
                                 response.write("</tr>")
                                 Rs.movenext
