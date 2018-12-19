@@ -15,14 +15,14 @@
     userID=request.form("userID")
     userPassword=request.form("userPassword")
     
-    sql="select 유저.고유번호 as 유저, 관리자.고유번호 as 관리자, "_
-    & "소유자.고유번호 as 소유자, 사용자.고유번호 as 사용자 "_
+    sql="select 유저.고유번호 as 유저, 관리자.관리자_고유번호 as 관리자, "_
+    & "소유자.소유자_고유번호 as 소유자, 사용자.사용자_고유번호 as 사용자 "_
     & "from 유저 left outer join 관리자 "_ 
-    & "on 유저.고유번호=관리자.고유번호 "_
+    & "on 유저.고유번호=관리자.관리자_고유번호 "_
     & "left outer join 소유자 "_
-    & "on 유저.고유번호=소유자.고유번호 "_
+    & "on 유저.고유번호=소유자.소유자_고유번호 "_
     & "left outer join 사용자 "_
-    & "on 유저.고유번호=사용자.고유번호 "_
+    & "on 유저.고유번호=사용자.사용자_고유번호 "_
     & "where 아이디='" & userID & "' "_ 
     & "and 비밀번호='" & userPassword & "'"
 

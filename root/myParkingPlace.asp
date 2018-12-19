@@ -8,8 +8,8 @@
   userID=session.contents("userID")
 
   sql="select  유저.아이디, * "_
-  & "from 주차장 join 소유자 on 주차장.고유번호=소유자.고유번호 "_ 
-  & "join 유저 on 유저.고유번호 = 소유자.고유번호 "_
+  & "from 주차장 join 소유자 on 주차장.소유자_고유번호=소유자.소유자_고유번호 "_ 
+  & "join 유저 on 유저.고유번호 = 소유자.소유자_고유번호 "_
   & "where 유저.아이디 = '" & userID & "'"
 
   Set Rs=Dbcon.Execute(sql)
@@ -42,8 +42,8 @@
                                 <th>종류</th>
                                 <th>주소</th>
                                 <th>최대 이용 시간</th>
-                                <th>개장시간</th>
-                                <th>폐장시간</th>
+                                <th>x좌표</th>
+                                <th>y좌표</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -52,13 +52,17 @@
                             do while not(Rs.EOF)
                                 response.write("<tr>")
                                 response.write("<td>")
-                                response.write(Rs("주차장번호"))
+                                response.write(Rs("주차장_번호"))
                                 response.write("</td>")
                                 response.write("<td>")
-                                response.write(Rs("시간당_요금"))
+                                response.write(Rs("시간당요금"))
                                 response.write("</td>")
                                 response.write("<td>")
-                                response.write(Rs("종류"))
+                                if Rs("종류")=0 then
+                                    response.write("공영")
+                                elseif Rs("종류")=1 then
+                                    response.write("사설")
+                                end if
                                 response.write("</td>")
                                 response.write("<td>")
                                 response.write(Rs("주소"))
@@ -67,10 +71,10 @@
                                 response.write(Rs("최대이용시간"))
                                 response.write("</td>")
                                 response.write("<td>")
-                                response.write(Rs("개장시간"))
+                                response.write(Rs("x좌표"))
                                 response.write("</td>")
                                 response.write("<td>")
-                                response.write(Rs("폐장시간"))
+                                response.write(Rs("y좌표"))
                                 response.write("</td>")
                                 response.write("<td>")
                                 response.write("<form action=""#"" method=""post"">")

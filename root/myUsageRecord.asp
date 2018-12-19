@@ -7,10 +7,10 @@
 
   userID=session.contents("userID")
 
-  sql="select 유저.아이디, 사용이력.고유번호, 사용이력.주차장번호, "_
-  & "사용이력.주차_시작시간, 사용이력.주차_종료시간, 사용이력.총_요금, 사용이력.납부요금 "_
-  & "from 사용이력 join 사용자 on 사용이력.고유번호=사용자.고유번호 "_ 
-  & "join 유저 on 유저.고유번호 = 사용자.고유번호 "_
+  sql="select 유저.아이디, 사용이력.사용자_고유번호, 사용이력.주차장_번호, "_
+  & "사용이력.주차_시작시간, 사용이력.주차종료시간, 사용이력.총_요금, 사용이력.납부한_요금 "_
+  & "from 사용이력 join 사용자 on 사용이력.사용자_고유번호=사용자.사용자_고유번호 "_ 
+  & "join 유저 on 유저.고유번호 = 사용자.사용자_고유번호 "_
   & "where 유저.아이디 = '" & userID & "'"
 
   Set Rs=Dbcon.Execute(sql)
@@ -42,7 +42,7 @@
                             <th>주차 시작시간</th>
                             <th>주차 종료시간</th>
                             <th>총 요금</th>
-                            <th>납부요금</th>
+                            <th>납부한 요금</th>
                             <th></th>
                             </tr>
                         </thead>
@@ -51,19 +51,19 @@
                             do while not(Rs.EOF)
                                 response.write("<tr>")
                                 response.write("<td>")
-                                response.write(Rs("주차장번호"))
+                                response.write(Rs("주차장_번호"))
                                 response.write("</td>")
                                 response.write("<td>")
                                 response.write(Rs("주차_시작시간"))
                                 response.write("</td>")
                                 response.write("<td>")
-                                response.write(Rs("주차_종료시간"))
+                                response.write(Rs("주차종료시간"))
                                 response.write("</td>")
                                 response.write("<td>")
                                 response.write(Rs("총_요금"))
                                 response.write("</td>")
                                 response.write("<td>")
-                                response.write(Rs("납부요금"))
+                                response.write(Rs("납부한_요금"))
                                 response.write("</td>")
                                 response.write("<td>")
                                 response.write("<form action=""#"" method=""post"">")

@@ -7,10 +7,10 @@
 
   userID=session.contents("userID")
 
-  sql="select 유저.아이디, 리뷰.리뷰_번호, 리뷰.평점, 리뷰.내용, 리뷰.주차장번호, 리뷰.고유번호 "_
-  & "from 리뷰 join 사용자 on 리뷰.고유번호= 사용자.고유번호 "_ 
-  & "join 주차장 on 리뷰.주차장번호=주차장.주차장번호 "_
-  & "join 유저 on 유저.고유번호=사용자.고유번호 "_
+  sql="select 유저.아이디, 리뷰.리뷰번호, 리뷰.평점, 리뷰.내용, 리뷰.주차장_번호, 리뷰.사용자_고유번호 "_
+  & "from 리뷰 join 사용자 on 리뷰.사용자_고유번호= 사용자.사용자_고유번호 "_ 
+  & "join 주차장 on 리뷰.주차장_번호=주차장.주차장_번호 "_
+  & "join 유저 on 유저.고유번호=사용자.사용자_고유번호 "_
   & "where 유저.아이디 = '" & userID & "'"
 
   Set Rs=Dbcon.Execute(sql)
@@ -50,7 +50,7 @@
                             do while not(Rs.EOF)
                                 response.write("<tr>")
                                 response.write("<td>")
-                                response.write(Rs("리뷰_번호"))
+                                response.write(Rs("리뷰번호"))
                                 response.write("</td>")
                                 response.write("<td>")
                                 response.write(Rs("평점"))
@@ -59,7 +59,7 @@
                                 response.write(Rs("내용"))
                                 response.write("</td>")
                                 response.write("<td>")
-                                response.write(Rs("주차장번호"))
+                                response.write(Rs("주차장_번호"))
                                 response.write("</td>")
                                 response.write("<td>")
                                 response.write("<form action=""#"" method=""post"">")

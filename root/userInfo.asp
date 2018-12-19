@@ -8,14 +8,14 @@
   userID=session.contents("userID")
 
   sql="select 유저.고유번호, 아이디, 비밀번호, 전화번호, 생년월일, "_
-  & "근무시작시간, 근무종료시간, 근무시작기간, 근무종료기간, "_
-  & "계좌,현재위치x, 현재위치y "_
+  & "근무_시작시간, 근무_종료시간, 근무_시작기간, 근무_종료기간, "_
+  & "계좌 "_
   & "from 유저 left outer join 관리자 "_ 
-  & "on 유저.고유번호=관리자.고유번호 "_
+  & "on 유저.고유번호=관리자.관리자_고유번호 "_
   & "left outer join 소유자 "_
-  & "on 유저.고유번호=소유자.고유번호 "_
+  & "on 유저.고유번호=소유자.소유자_고유번호 "_
   & "left outer join 사용자 "_
-  & "on 유저.고유번호=사용자.고유번호 "_
+  & "on 유저.고유번호=사용자.사용자_고유번호 "_
   & "where 아이디='" & userID &"'"
 
   Set Rs=Dbcon.Execute(sql)
@@ -53,7 +53,7 @@
           </tbody>
         </table>
         <%
-        if Not IsNull(Rs("근무시작시간")) then
+        if session("isManager") then
         response.write("<h3>관리자 정보</h3>")
         response.write("<table class=""table table-bordered"">")
         response.write("<thead>")
@@ -68,19 +68,19 @@
         response.write("<tr>")
           
         response.write("<td>")  
-        response.write(Rs("근무시작시간"))
+        response.write(Rs("근무_시작시간"))
         response.write("</td><td>")
-        response.write(Rs("근무종료시간"))
+        response.write(Rs("근무_종료시간"))
         response.write("</td><td>")
-        response.write(Rs("근무시작기간"))
+        response.write(Rs("근무_시작기간"))
         response.write("</td><td>")
-        response.write(Rs("근무종료기간"))
+        response.write(Rs("근무_종료기간"))
         response.write("</td></tr>")
         response.write("</tbody></table>")
         end if
         %>
         <%
-        if Not IsNull(Rs("계좌")) then
+        if session("isOwner") then
         response.write("<h3>소유자 정보</h3>")
         response.write("<table class=""table table-bordered"">")
         response.write("<thead>")

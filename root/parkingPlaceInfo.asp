@@ -8,9 +8,9 @@
   userID=session.contents("userID")
   placeID=request.QueryString("parkingPlaceNumber")
 
-  sql="select 자리.자리번호,cast(자리.현재_사용여부 as int) as 사용여부,자리.이용대상,자리.가로크기,자리.세로크기 "_
-  & "from 자리 join 주차장 on 자리.주차장번호=주차장.주차장번호 "_ 
-  & "where 주차장.주차장번호 = '" & placeID & "'"
+  sql="select 자리.자리번호,cast(자리.현재_사용여부 as int) as 사용여부,자리.이용대상,자리.수용차종 "_
+  & "from 자리 join 주차장 on 자리.주차장_번호=주차장.주차장_번호 "_ 
+  & "where 주차장.주차장_번호 = '" & placeID & "'"
 
   Set Rs=Dbcon.Execute(sql)
 %>
@@ -40,8 +40,7 @@
                                 <th>자리번호</th>
                                 <th>사용여부</th>
                                 <th>이용대상</th>
-                                <th>가로크기</th>
-                                <th>세로크기</th>
+                                <th>수용차종</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -60,13 +59,22 @@
                                 end if
                                 response.write("</td>")
                                 response.write("<td>")
-                                response.write(Rs("이용대상"))
+                                if Rs("이용대상")=0 then
+                                    response.write("일반")
+                                elseif Rs("이용대상")=1 then
+                                    response.write("장애인")
+                                elseif Rs("이용대상")=2 then
+                                    response.write("여성")
+                                end if
                                 response.write("</td>")
                                 response.write("<td>")
-                                response.write(Rs("가로크기"))
-                                response.write("</td>")
-                                response.write("<td>")
-                                response.write(Rs("세로크기"))
+                                if Rs("수용차종")=0 then
+                                    response.write("소형")
+                                elseif Rs("수용차종")=1 then
+                                    response.write("중형")
+                                elseif Rs("수용차종")=2 then
+                                    response.write("대형")
+                                end if
                                 response.write("</td>")
                                 response.write("<td>")
                                 response.write("<form action=""#"" method=""post"">")

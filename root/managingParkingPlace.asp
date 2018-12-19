@@ -7,10 +7,10 @@
 
   userID=session.contents("userID")
 
-  sql="select 주차장.주차장번호, 주차장.주소, 주차장.종류, 주차장.최대이용시간, 주차장.개장시간, 주차장.폐장시간, "_
-  & "주차장.총_자리_수, 주차장.현재_자리_수 "_
-  & "from 주차장 join 관리자 on 주차장.고유번호=관리자.고유번호 "_ 
-  & "join 유저 on 관리자.고유번호=유저.고유번호 "_
+  sql="select 주차장.주차장_번호, 주차장.시간당요금, 주차장.주소, 주차장.종류, 주차장.최대이용시간, 주차장.개장시간, 주차장.폐장시간, "_
+  & "주차장.x좌표, 주차장.y좌표 "_
+  & "from 주차장 join 관리자 on 주차장.관리자_고유번호=관리자.관리자_고유번호 "_ 
+  & "join 유저 on 관리자.관리자_고유번호=유저.고유번호 "_
   & "where 유저.아이디 = '" & userID & "'"
 
   Set Rs=Dbcon.Execute(sql)
@@ -44,13 +44,14 @@
                         <thead>
                             <tr>
                                 <th>주차장번호</th>
+                                <th>시간당 요금</th>
                                 <th>주소</th>
                                 <th>종류</th>
                                 <th>최대 이용시간</th>
                                 <th>개장시간</th>
                                 <th>폐장시간</th>
-                                <th>총 자리 수</th>
-                                <th>현재 자리 수</th>
+                                <th>x좌표</th>
+                                <th>y좌표</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -60,10 +61,13 @@
                                 response.write("<tr>")
                                 response.write("<td>")
                                 response.write("<a href=""parkingPlaceInfo.asp?parkingPlaceNumber=")
-                                response.write(Rs("주차장번호"))
+                                response.write(Rs("주차장_번호"))
                                 response.write(""">")
                                 response.write("현황")
                                 response.write("</a>")
+                                response.write("</td>")
+                                response.write("<td>")
+                                response.write(Rs("시간당요금"))
                                 response.write("</td>")
                                 response.write("<td>")
                                 response.write(Rs("주소"))
@@ -81,10 +85,10 @@
                                 response.write(Rs("폐장시간"))
                                 response.write("</td>")
                                 response.write("<td>")
-                                response.write(Rs("총_자리_수"))
+                                response.write(Rs("x좌표"))
                                 response.write("</td>")
                                 response.write("<td>")
-                                response.write(Rs("현재_자리_수"))
+                                response.write(Rs("y좌표"))
                                 response.write("</td>")
                                 response.write("<td>")
                                 response.write("<form action=""#"" method=""post"">")

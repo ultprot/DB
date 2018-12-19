@@ -7,9 +7,10 @@
 
   userID=session.contents("userID")
 
-  sql="select 유저.아이디, 차량.차종, 차량.차량번호, 차량.고유번호 "_
-  & "from 차량 join 사용자 on 차량.고유번호= 사용자.고유번호 "_ 
-  & "join 유저 on 유저.고유번호= 사용자.고유번호 "_
+  sql="select 차량.* "_
+  & "from 차량 join 차량소유 on 차량.차량번호=차량소유.차량번호 "_ 
+  & "join 사용자 on 차량소유.사용자_고유번호=사용자.사용자_고유번호 "_
+  & "join 유저 on 사용자.사용자_고유번호=유저.고유번호 "_
   & "where 유저.아이디 = '" & userID & "'"
 
   Set Rs=Dbcon.Execute(sql)
@@ -44,7 +45,6 @@
                             <tr>
                                 <th>차종</th>
                                 <th>차량번호</th>
-                                <th>고유번호</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -53,13 +53,16 @@
                             do while not(Rs.EOF)
                                 response.write("<tr>")
                                 response.write("<td>")
-                                response.write(Rs("차종"))
+                                if Rs("차종")=0 then
+                                    response.write("소형")
+                                elseif Rs("차종")=1 then
+                                    response.write("중형")
+                                elseif Rs("차종")=2 then
+                                    response.write("대형")
+                                end if
                                 response.write("</td>")
                                 response.write("<td>")
                                 response.write(Rs("차량번호"))
-                                response.write("</td>")
-                                response.write("<td>")
-                                response.write(Rs("고유번호"))
                                 response.write("</td>")
                                 response.write("<td>")
                                 response.write("<a href=""carDelete.asp?" & "carNumber=" & Rs("차량번호") & """>")
