@@ -1,5 +1,6 @@
 <%
     session.contents.remove("userID")
+    session.contents.remove("userNumber")
     session.contents.remove("isManager")
     session.contents.remove("isOwner")
     session.contents.remove("isNormal")

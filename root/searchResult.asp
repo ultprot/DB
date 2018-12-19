@@ -28,10 +28,11 @@
     parkType=1
   end if
 
-  sqlCartype="select * from 차량 where 차량번호="_
-  & userCarNumber & ";"
-
-  Set Rs=Dbcon.Execute(sqlCartype)
+  if not isempty(userCarNumber) then
+    sqlCartype="select * from 차량 where 차량번호="_
+    & userCarNumber & ";"
+    Set Rs=Dbcon.Execute(sqlCartype)
+  end if
 
   sqlSmall="select 주차장.주차장_번호, 주차장.주소, 주차장.종류, "_
   & "주차장.시간당요금, 주차장.최대이용시간,총자리수,현재자리수, 주차장.개장시간, 주차장.폐장시간, "_
@@ -75,12 +76,28 @@
   & "where 주차장평점>="& rateLimit & " and 현재자리수>0 and 대형빈자리수>0 and 주차장.종류=" & parkType _
   & " ORDER BY distance;"
 
-  if Rs("차종")=0 then 
-    sql=sqlSmall
-  elseif Rs("차종")=1 then
-    sql=sqlMideum
-  elseif Rs("차종")=2 then
-    sql=sqlLarge
+  sqlNone="select 주차장.주차장_번호, 주차장.주소, 주차장.종류, "_
+  & "주차장.시간당요금, 주차장.최대이용시간,총자리수,현재자리수, 주차장.개장시간, 주차장.폐장시간, "_
+  & "( (" & xpos & "-주차장.x좌표)*(" & xpos & "-주차장.x좌표)+(" & ypos & "-주차장.y좌표)*(" & ypos & "-주차장.y좌표)) as distance, 주차장평점 "_
+  & "from 주차장 join (select 주차장.주차장_번호,count(*) as 총자리수, "_
+  & "count(case when 자리.현재_사용여부 = 0 then 1 end) as 현재자리수, "_
+  & "AVG(convert(float,리뷰.평점)) as 주차장평점 "_
+  & "from 주차장 join 리뷰 on 주차장.주차장_번호=리뷰.주차장_번호 "_
+  & "join 자리 on 주차장.주차장_번호=자리.주차장_번호 "_
+  & "group by 주차장.주차장_번호) as 평균평점 on 주차장.주차장_번호=평균평점.주차장_번호 "_
+  & "where 주차장평점>="& rateLimit & "and 주차장.종류=" & parkType _
+  & "ORDER BY distance; "
+
+  if not isempty(userCarNumber) then
+    if Rs("차종")=0 then 
+        sql=sqlSmall
+    elseif Rs("차종")=1 then
+        sql=sqlMideum
+    elseif Rs("차종")=2 then
+        sql=sqlLarge
+    end if
+  else
+    sql=sqlNone
   end if
   
   Set Rs=Dbcon.Execute(sql)

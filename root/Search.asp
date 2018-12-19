@@ -93,22 +93,3 @@
 %>
 <!-- /.content-wrapper -->
 <!--#include virtual="./footer.asp"-->
-
-
-
-
-
-<%
-'if Rs.BOF then
-'        Dbcon.Close()
-'        Set Dbcon=Nothing
-'        Set Rs=Nothing
-'        dir="register.asp?inputID=" & inputID
-'        response.redirect(dir)
-'    else
-'        Dbcon.Close()
-'        Set Dbcon=Nothing
-'        Set Rs=Nothing
-'        response.write("이미 존재 하는 아이디입니다.")
-'    end if
-    %>
