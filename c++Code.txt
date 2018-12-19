@@ -30,9 +30,6 @@ void main() {
 	FILE *openPointer;
 	openPointer = fopen("output.txt", "w+");
 	char out_str[100] = { 0, };
-	//fclose(openPointer);
-	//fprintf(openPointer, "Insert INTO 소유자\n", out_str);
-	//fprintf(openPointer, "values (%d,%s)\n", i + 1, random_string_number(15), out_str);
 	int i, j;
 
 
@@ -49,16 +46,7 @@ void main() {
 	ㅁ주차장(주차장_번호,구청_관리주기,시간당요금,종류,주소,x좌표,y좌표,최대이용시간,개장시간,폐장시간,구청_고유번호,관리자_고유번호,소유자_고유번호
 	ㅁ차량(차량번호,차종
 	ㅁ차량소유(사용자고유번호,차량번호
-	
 
-	<생성>
-	구청x10 (중구, 동구, 미추홀구, 연수구, 남동구, 부평구, 계양구, 서구, 강화군, 옹진군) 1~10
-	유저x500번 확률탐색 관리자20% 소유자10% 사용자95%
-	차량x200번 차량소유x250
-	주차장x50 (자리 주차장 당 최대 50개)
-	사용이력x1000 //종료시간 NULL값 가능하게 할것
-	리뷰x100
-	관리기록 주차장별로 1~5개씩
 	*/
 
 
@@ -143,8 +131,8 @@ void main() {
 	charNUM = new int[201];
 	for (i = 0; i < 200; i++) {
 		fprintf(openPointer, "Insert INTO 차량\n", out_str);
-		charNUM[i + 1] = rand() % 10000;
-		fprintf(openPointer, "values ('%4d',%d)\n", charNUM[i + 1],rand()%3, out_str);
+		charNUM[i + 1] = rand() % 9000 + 1000;
+		fprintf(openPointer, "values (%d,%d)\n", charNUM[i + 1],rand()%3, out_str);
 	}
 	fprintf(openPointer, "\n\n\n", out_str);
 	fclose(openPointer);
