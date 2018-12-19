@@ -5,7 +5,7 @@ Sub Application_OnStart
 '어플리케이션이 시작할 때의 해야할 일을 코딩
      Dim dbConnect
 
-     dbConnect = "Password=temppass; Provider=SQLOLEDB.1;Persist Security Info=False;User ID=temp;Initial Catalog=DBProject1;Data Source=DESKTOP-CJLUUSO\SQLEXPRESS"
+     dbConnect = "Provider=SQLOLEDB.1;Password=ehdsud12;Persist Security Info=False;User ID=sa;Initial Catalog=DBProject1;Data Source=DESKTOP-QU2CDA4\SQLEXPRESS"
      Application("dbConnect") = dbConnect
 End Sub
 
