@@ -8,10 +8,12 @@
 <%
     Set Dbcon=Server.CreateObject("ADODB.Connection")
     Dbcon.Open Application("dbConnect")
-
+    Dim inputID
+    Dim dir
+    
     inputID=request.form("userID")
     
-    sql="select * from 유저 where 아이디=" & inputID
+    sql="select * from 유저 where 아이디='" & inputID & "';"
 
     Set Rs=Dbcon.Execute(sql)
 
@@ -19,33 +21,12 @@
         Dbcon.Close()
         Set Dbcon=Nothing
         Set Rs=Nothing
-        Dim goto
-        goto="register.asp?inputID=" & inputID
-        response.redirect(goto)
+        dir="register.asp?inputID=" & inputID
+        response.redirect(dir)
     else
-        session("userID")=userID
-        session("userNumber")=Rs("유저")
-        if IsNull(Rs("관리자")) then
-            session("isManager")=False
-        else
-            session("isManager")=True
-        end if
-
-        if IsNull(Rs("소유자")) then
-            session("isOwner")=False
-        else
-            session("isOwner")=True
-        end if
-
-        if IsNull(Rs("사용자")) then
-            session("isNormal")=False
-        else
-            session("isNormal")=True
-        end if
-
         Dbcon.Close()
         Set Dbcon=Nothing
         Set Rs=Nothing
-        Server.Execute("userInfo.asp")
+        response.write("이미 존재 하는 아이디입니다.")
     end if
 %>
