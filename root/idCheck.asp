@@ -8,23 +8,10 @@
 <%
     Set Dbcon=Server.CreateObject("ADODB.Connection")
     Dbcon.Open Application("dbConnect")
-    
-    Dim userID
-    Dim userPassword
 
-    userID=request.form("userID")
-    userPassword=request.form("userPassword")
+    inputID=request.form("userID")
     
-    sql="select 유저.고유번호 as 유저, 관리자.고유번호 as 관리자, "_
-    & "소유자.고유번호 as 소유자, 사용자.고유번호 as 사용자 "_
-    & "from 유저 left outer join 관리자 "_ 
-    & "on 유저.고유번호=관리자.고유번호 "_
-    & "left outer join 소유자 "_
-    & "on 유저.고유번호=소유자.고유번호 "_
-    & "left outer join 사용자 "_
-    & "on 유저.고유번호=사용자.고유번호 "_
-    & "where 아이디='" & userID & "' "_ 
-    & "and 비밀번호='" & userPassword & "'"
+    sql="select * from 유저 where 아이디=" & inputID
 
     Set Rs=Dbcon.Execute(sql)
 
@@ -32,7 +19,9 @@
         Dbcon.Close()
         Set Dbcon=Nothing
         Set Rs=Nothing
-        response.redirect("404.html")
+        Dim goto
+        goto="register.asp?inputID=" & inputID
+        response.redirect(goto)
     else
         session("userID")=userID
         session("userNumber")=Rs("유저")

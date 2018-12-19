@@ -55,7 +55,7 @@
             </button>
           </a>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-            <a class="dropdown-item" href="#">Settings</a>
+            <a class="dropdown-item" href="userInfo.asp">내 정보</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="logout.asp">Logout</a>
           </div>
@@ -82,7 +82,7 @@
           response.write("</a>")
           response.write("<div class=""dropdown-menu"" aria-labelledby=""pagesDropdown"">")
           response.write("<h6 class=""dropdown-header"">Menu:</h6>")
-          response.write("<a class=""dropdown-item"" href=""login.html"">Login</a>")
+          response.write("<a class=""dropdown-item"" href=""managingParkingPlace.asp"">관리중인 주차장</a>")
           response.write("<div class=""dropdown-divider""></div>")
           response.write("</div>")
           response.write("</li>")
