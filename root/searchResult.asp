@@ -16,8 +16,8 @@
 
   Dim sql
 
-  userX=request.querystring("xpos")
-  userY=request.querystring("ypos")
+  xpos=request.querystring("xpos")
+  ypos=request.querystring("ypos")
   userCarNumber=request.querystring("carNumber")
   rateLimit=request.querystring("rateLimit")
   parkType=request.querystring("parkType")
@@ -36,8 +36,8 @@
 
   sqlSmall="select 주차장.주차장_번호, 주차장.주소, 주차장.종류, "_
   & "주차장.시간당요금, 주차장.최대이용시간,총자리수,현재자리수, 주차장.개장시간, 주차장.폐장시간, "_
-  & "( (" & xpos & "-주차장.x좌표)*(" & xpos & "-주차장.x좌표)+(" & ypos & "-주차장.y좌표)*(" & ypos _
-  & "-주차장.y좌표)) as distance, 주차장평점 "_
+  & "convert(int,sqrt(( (" & xpos & "-주차장.x좌표)*(" & xpos & "-주차장.x좌표)+(" & ypos & "-주차장.y좌표)*(" & ypos _
+  & "-주차장.y좌표)))) as distance, 주차장평점 "_
   & "from 주차장 join (select 주차장.주차장_번호,count(*) as 총자리수, "_
   & "count(case when 자리.현재_사용여부 = 0 then 1 end) as 현재자리수, "_
   & "AVG(convert(float,리뷰.평점)) as 주차장평점 ,"_
@@ -50,8 +50,8 @@
 
   sqlMideum="select 주차장.주차장_번호, 주차장.주소, 주차장.종류, "_
   & "주차장.시간당요금, 주차장.최대이용시간,총자리수,현재자리수, 주차장.개장시간, 주차장.폐장시간, "_
-  & "( (" & xpos & "-주차장.x좌표)*(" & xpos & "-주차장.x좌표)+(" & ypos & "-주차장.y좌표)*(" & ypos _
-  & "-주차장.y좌표)) as distance, 주차장평점 "_
+  & "convert(int,sqrt(( (" & xpos & "-주차장.x좌표)*(" & xpos & "-주차장.x좌표)+(" & ypos & "-주차장.y좌표)*(" & ypos _
+  & "-주차장.y좌표)))) as distance, 주차장평점 "_
   & "from 주차장 join (select 주차장.주차장_번호,count(*) as 총자리수, "_
   & "count(case when 자리.현재_사용여부 = 0 then 1 end) as 현재자리수, "_
   & "AVG(convert(float,리뷰.평점)) as 주차장평점 ,"_
@@ -64,8 +64,8 @@
 
   sqlLarge="select 주차장.주차장_번호, 주차장.주소, 주차장.종류, "_
   & "주차장.시간당요금, 주차장.최대이용시간,총자리수,현재자리수, 주차장.개장시간, 주차장.폐장시간, "_
-  & "( (" & xpos & "-주차장.x좌표)*(" & xpos & "-주차장.x좌표)+(" & ypos & "-주차장.y좌표)*(" & ypos _
-  & "-주차장.y좌표)) as distance, 주차장평점 "_
+  & "convert(int,sqrt(( (" & xpos & "-주차장.x좌표)*(" & xpos & "-주차장.x좌표)+(" & ypos & "-주차장.y좌표)*(" & ypos _
+  & "-주차장.y좌표)))) as distance, 주차장평점 "_
   & "from 주차장 join (select 주차장.주차장_번호,count(*) as 총자리수, "_
   & "count(case when 자리.현재_사용여부 = 0 then 1 end) as 현재자리수, "_
   & "AVG(convert(float,리뷰.평점)) as 주차장평점 ,"_
@@ -78,7 +78,7 @@
 
   sqlNone="select 주차장.주차장_번호, 주차장.주소, 주차장.종류, "_
   & "주차장.시간당요금, 주차장.최대이용시간,총자리수,현재자리수, 주차장.개장시간, 주차장.폐장시간, "_
-  & "( (" & xpos & "-주차장.x좌표)*(" & xpos & "-주차장.x좌표)+(" & ypos & "-주차장.y좌표)*(" & ypos & "-주차장.y좌표)) as distance, 주차장평점 "_
+  & "convert(int,sqrt(( (" & xpos & "-주차장.x좌표)*(" & xpos & "-주차장.x좌표)+(" & ypos & "-주차장.y좌표)*(" & ypos & "-주차장.y좌표)))) as distance, 주차장평점 "_
   & "from 주차장 join (select 주차장.주차장_번호,count(*) as 총자리수, "_
   & "count(case when 자리.현재_사용여부 = 0 then 1 end) as 현재자리수, "_
   & "AVG(convert(float,리뷰.평점)) as 주차장평점 "_
@@ -124,8 +124,8 @@
                     <table class="table table-bordered" id="dataTable">
                         <thead>
                             <tr>
-                                <th>주차장 번호</th>
                                 <th>거리</th>
+                                <th>주차장 번호</th>
                                 <th>주소</th>
                                 <th>종류</th>
                                 <th>최대 이용 시간</th>
@@ -141,11 +141,10 @@
                             do while not(Rs.EOF)
                                 response.write("<tr>")
                                 response.write("<td>")
-                                response.write(Rs("주차장_번호"))
+                                response.write(Rs("distance"))
                                 response.write("</td>")
                                 response.write("<td>")
-                                response.write(Rs("distance"))
-                                response.write("미터")
+                                response.write(Rs("주차장_번호"))
                                 response.write("</td>")
                                 response.write("<td>")
                                 response.write(Rs("주소"))

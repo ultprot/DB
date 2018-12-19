@@ -5,19 +5,16 @@
   
   Dim userID
 
+  userID=session("userID")
 
-  sql="select distinct 유저.아이디 ,총사용시간, "_
-  & "case when 총사용시간 >= 40 then '우수회원' "_
-  & "when 총사용시간 between 10 and 39 then '보통회원' "_
-  & "when 총사용시간 between 5 and 9 then '소극적회원' else '유령회원' end as '회원등급' "_
-  & "from 사용이력 join (select 사용이력.사용자_고유번호, "_
-  & "sum(datediff(hour,사용이력.주차_시작시간,사용이력.주차종료시간)) as 총사용시간 "_
-  & "from 사용이력 group by 사용이력.사용자_고유번호) as 합계 "_
-  & "on 사용이력.사용자_고유번호=합계.사용자_고유번호 "_
-  & "join 사용자 on 사용이력.사용자_고유번호=사용자.사용자_고유번호 "_
-  & "join 유저 on 유저.고유번호=사용자.사용자_고유번호 "_
-  & "where 사용이력.주차종료시간 is not null "_
-  & "order by 총사용시간 DESC; "
+  sql="Select 유저.아이디,DATEPART(mm, 사용이력.주차종료시간) as 월, "_
+  & "sum(사용이력.납부한_요금) as 월별총합납부요금 "_
+  & "From 유저 join 소유자 on 유저.고유번호=소유자.소유자_고유번호 "_
+  & "join 주차장 on 소유자.소유자_고유번호= 주차장.소유자_고유번호 "_
+  & "join 사용이력 on 주차장.주차장_번호=사용이력.주차장_번호 "_
+  & "group by 유저.아이디,DATEPART(mm, 사용이력.주차종료시간) "_
+  & "having DATEPART(mm, 사용이력.주차종료시간) is not null and 유저.아이디 = '" & userID & "'"_
+  & "order by DATEPART(mm, 사용이력.주차종료시간) "
 
   Set Rs=Dbcon.Execute(sql)
 %>
@@ -29,18 +26,18 @@
       <!-- Breadcrumbs-->
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
-          회원 등급
+          소유자
         </li>
       </ol>
 
       <div class="container">
-        <h2>회원 등급 목록</h2>
-        <table class="table table-bordered" id="dataTable">
+        <h2>소유자 수입</h2>
+        <table class="table table-bordered">
           <thead>
             <tr>
               <th>아이디</th>
-              <th>총사용시간</th>
-              <th>회원등급</th>
+              <th>월</th>
+              <th>월별 수입</th>
             </tr>
           </thead>
           <tbody>
@@ -51,10 +48,10 @@
                                 response.write(Rs("아이디"))
                                 response.write("</td>")
                                 response.write("<td>")
-                                response.write(Rs("총사용시간"))
+                                response.write(Rs("월"))
                                 response.write("</td>")
                                 response.write("<td>")
-                                response.write(Rs("회원등급"))
+                                response.write(Rs("월별총합납부요금"))
                                 response.write("</td>")
                                 response.write("</tr>")
                                 Rs.movenext

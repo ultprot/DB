@@ -29,7 +29,7 @@
 
       <div class="container">
         <h2>구청 별 다음 관리일자 확인</h2>
-        <table class="table table-bordered">
+        <table class="table table-bordered" id="dataTable">
           <thead>
             <tr>
               <th>구 명칭</th>

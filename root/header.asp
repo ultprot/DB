@@ -72,6 +72,10 @@
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>주차장 검색</span>
           </a>
+          <a class="nav-link" href="utility.asp">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>유틸리티</span>
+          </a>
         </li>
         <%
         if session("isManager") then
@@ -98,6 +102,7 @@
           response.write("<div class=""dropdown-menu"" aria-labelledby=""pagesDropdown"">")
           response.write("<h6 class=""dropdown-header"">Menu:</h6>")
           response.write("<a class=""dropdown-item"" href=""myParkingPlace.asp"">내 주차장</a>")
+          response.write("<a class=""dropdown-item"" href=""ownerIncome.asp"">내 수입</a>")
           response.write("<div class=""dropdown-divider""></div>")
           response.write("</div>")
           response.write("</li>")

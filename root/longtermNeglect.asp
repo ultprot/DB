@@ -33,7 +33,7 @@
 
       <div class="container">
         <h2>장기방치자 목록</h2>
-        <table class="table table-bordered">
+        <table class="table table-bordered" id="dataTable">
           <thead>
             <tr>
               <th>사용자 고유번호</th>
